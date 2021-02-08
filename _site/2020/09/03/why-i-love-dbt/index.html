@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Why I love dbt | Food For Data</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Why I love dbt" />
+<meta name="author" content="Martina Z" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Reading Time: 3 minutes" />
+<meta property="og:description" content="Reading Time: 3 minutes" />
+<link rel="canonical" href="https://marzaccaro.github.io/blog/2020/09/03/why-i-love-dbt/" />
+<meta property="og:url" content="https://marzaccaro.github.io/blog/2020/09/03/why-i-love-dbt/" />
+<meta property="og:site_name" content="Food For Data" />
+<meta property="og:image" content="https://marzaccaro.github.io/blog/wp-content/uploads/2020/09/photo5947103406906782721.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-09-03T20:00:32+01:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://marzaccaro.github.io/blog/wp-content/uploads/2020/09/photo5947103406906782721.jpg" />
+<meta property="twitter:title" content="Why I love dbt" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","image":"https://marzaccaro.github.io/blog/wp-content/uploads/2020/09/photo5947103406906782721.jpg","url":"https://marzaccaro.github.io/blog/2020/09/03/why-i-love-dbt/","headline":"Why I love dbt","dateModified":"2020-09-03T20:00:32+01:00","datePublished":"2020-09-03T20:00:32+01:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://marzaccaro.github.io/blog/2020/09/03/why-i-love-dbt/"},"author":{"@type":"Person","name":"Martina Z"},"description":"Reading Time: 3 minutes","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://marzaccaro.github.io/blog/feed.xml" title="Food For Data" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Food For Data</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about.html">About</a><a class="page-link" href="/blog/privacy-policy.html">Privacy Policy</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Why I love dbt</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2020-09-03T20:00:32+01:00" itemprop="datePublished">Sep 3, 2020
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Martina Z</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><span class="rt-reading-time" style="display: block;"><span class="rt-label rt-prefix">Reading Time: </span> <span class="rt-time">3</span> <span class="rt-label rt-postfix">minutes</span></span></p>
+
+<p>I am an analyst and since the early days I’ve found quite frustrating having to wait days, weeks or even months for the data to be available – because the data warehouse developers were busy, and felt I couldn’t add value or contribute doing what I knew: analysing data.</p>
+
+<p>And I still remember my first job as a BI developer back in 2014 where I was using <a rel="noreferrer noopener" href="https://www.oracle.com/uk/middleware/technologies/bi-enterprise-edition.html" target="_blank">Oracle BI</a>, and I needed to wait the transformation and loading to be completed, before I could do anything at all. That implies a waste not only because the BI developers can’t use their expertise in helping the design, but also because the agility of creating data value is greatly compromised [more on this in the section <em>Coupled pipeline decomposition</em> of <a href="https://martinfowler.com/articles/data-monolith-to-mesh.html">this article</a>].</p>
+
+<p>Fast forward March 2019, my team at <a href="https://www.simplybusiness.co.uk/">Simply Business</a> decided to introduce dbt, in wander for a more clear pipeline and a more robust analytics. The new paradigm is ELT (Extract, Load, Transform) instead of ETL (Extract, Transform, Load) because of the incredible computing power the cloud databases (<a href="https://www.snowflake.com/">Snowflake</a>, <a href="https://aws.amazon.com/redshift/?whats-new-cards.sort-by=item.additionalFields.postDateTime&amp;whats-new-cards.sort-order=desc" data-type="URL" data-id="https://aws.amazon.com/redshift/?whats-new-cards.sort-by=item.additionalFields.postDateTime&amp;whats-new-cards.sort-order=desc">Redshift</a>, <a href="https://cloud.google.com/bigquery">BigQuery</a> among others) can bring to the table.</p>
+
+<p>With this new approach, I no longer need to wait for someone to create the base tables for me to use in the reporting tool of choice, and what is most exciting I have a lot more freedom and flexibility to tailor my data structure to the needs of the reporting tool and the business requirements, iterating faster than ever before.</p>
+
+<p>What it means is my role as well changed, and I am no longer building reports / reporting models waiting patiently for someone to load the clean and modelled data for me, but I can just wait for someone to load them and then rework and adapt the model to the business requirements, exposing the changes in the reporting layer with no waiting times. Some companies went on and even adopted some loaders like <a rel="noreferrer noopener" href="https://www.stitchdata.com/" target="_blank">Stitch</a> or <a href="https://fivetran.com/">FiveTran</a> to be able to load data from the data sources and make the loading even quicker.</p>
+
+<p>This change means two main consequences on my role: <strong>more knowledge of the data sources and the relationship among them</strong>, but also the responsibility [<a href="https://en.wikipedia.org/wiki/With_great_power_comes_great_responsibility">with more power comes more responsibility</a>, the evergreen quote] to create something that is reusable rather than create a new table every time a new requirement come in: so understanding if it’s a case of <strong>adding to the existing content or create something else</strong> to cover the new business questions arising.</p>
+
+<div class="wp-block-image">
+  <figure class="aligncenter is-resized"><img src="https://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721-1024x1024.jpg" alt="" class="wp-image-375" width="309" height="309" srcset="http://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721-1024x1024.jpg 1024w, http://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721-300x300.jpg 300w, http://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721-150x150.jpg 150w, http://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721-768x768.jpg 768w, http://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721-200x200.jpg 200w, http://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721-320x320.jpg 320w, http://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721.jpg 1280w" sizes="(max-width: 309px) 100vw, 309px" /><figcaption>My bitmoji, credit to Bitmoji &amp; dbt for the logo. <br />I feel a super-analyst, just thanks to dbt.</figcaption></figure>
+</div>
+
+<p>dbt is the T, the Trasform, in the ELT process, and the power that made me a <strong>super-analyst</strong>: faster, more reliable and empowered to understand not only the business, but how the business needs are translated into a data model. That’s why I love dbt and I’ll try to describe it in some upcoming posts, hoping to spread the love.</p>
+
+<p>Curious to know more? Start reading these blog posts:</p>
+
+<ul>
+  <li><a href="https://blog.getdbt.com/what--exactly--is-dbt-/" target="_blank" rel="noreferrer noopener">What, exactly, is dbt?</a></li>
+  <li><a href="https://blog.getdbt.com/is-dbt-the-right-tool-for-my-data-transformations/" target="_blank" rel="noreferrer noopener">Is dbt the right tool for my data transformations?</a></li>
+  <li><a href="https://highgrowthengineering.substack.com/p/why-is-dbt-so-important-" target="_blank" rel="noreferrer noopener">Why dbt is so important?</a></li>
+</ul>
+
+<p>Feel like you want to listen to something, instead? [Trying to avoid screen time uh?] Try this podcast episode:</p>
+
+<p><a href="https://softwareengineeringdaily.com/2020/03/09/dbt-data-build-tool-with-tristan-handy/" target="_blank" rel="noreferrer noopener">Software Engineering Daily, DBT: Data Build Tool with Tristan Handy</a></p>
+
+<p>Want to learn by doing? Check out this <a href="https://docs.getdbt.com/tutorial/setting-up/">Tutorial</a></p>
+
+<p>Want to support your learning? The dbt community is just incredibly helpful and welcoming, you can join the <a href="https://community.getdbt.com/">slack channel</a>, or check out the <a href="https://discourse.getdbt.com/">Discourse online</a>.</p>
+
+<p>And finally they just re-launched <a rel="noreferrer noopener" href="https://www.getdbt.com/coalesce/" target="_blank">Coalesce 2020, 7-11 December</a>, can’t wait to attend!</p>
+
+  </div><a class="u-url" href="/blog/2020/09/03/why-i-love-dbt/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Food For Data</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Food For Data</li><li><a class="u-email" href="mailto:your-email@example.com">your-email@example.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/marzaccaro"><svg class="svg-icon"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg> <span class="username">marzaccaro</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Feeding my data thoughts</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

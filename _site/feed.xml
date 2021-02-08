@@ -1,0 +1,721 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://marzaccaro.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://marzaccaro.github.io/blog/" rel="alternate" type="text/html" /><updated>2021-02-08T22:29:38+00:00</updated><id>https://marzaccaro.github.io/blog/feed.xml</id><title type="html">Food For Data</title><subtitle>Feeding my data thoughts</subtitle><entry><title type="html">Forecasting with Facebook Prophet, an introduction.</title><link href="https://marzaccaro.github.io/blog/2021/02/07/forecasting-with-facebook-prophet-an-introduction/" rel="alternate" type="text/html" title="Forecasting with Facebook Prophet, an introduction." /><published>2021-02-07T17:59:52+00:00</published><updated>2021-02-07T17:59:52+00:00</updated><id>https://marzaccaro.github.io/blog/2021/02/07/forecasting-with-facebook-prophet-an-introduction</id><content type="html" xml:base="https://marzaccaro.github.io/blog/2021/02/07/forecasting-with-facebook-prophet-an-introduction/">&lt;p&gt;&lt;span class=&quot;rt-reading-time&quot; style=&quot;display: block;&quot;&gt;&lt;span class=&quot;rt-label rt-prefix&quot;&gt;Reading Time: &lt;/span&gt; &lt;span class=&quot;rt-time&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;rt-label rt-postfix&quot;&gt;minutes&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a rel=&quot;noreferrer noopener&quot; href=&quot;https://en.wikipedia.org/wiki/Time_series#:~:text=Most%20commonly%2C%20a%20time%20series,the%20Dow%20Jones%20Industrial%20Average.&quot; target=&quot;_blank&quot;&gt;Time series&lt;/a&gt; analysis and forecasting are useful in so many contexts, from economy to demographics, and in all the scenarios where you have a sequence of observations that are indexed over time. Examples include the number of Covid-19 cases per day (sadly we are all too familiar with this), the number of pizzas served in a day by a restaurant (this makes me happier), or again the average daily temperature.&lt;/p&gt;
+
+&lt;p&gt;Often in business scenarios, there is a need for forecasting demand, orders, or revenue, and sometimes just assuming a linear pattern doesn’t account for seasonality and change in trend. Plus having a quicker and more reliable way to forecast allows businesses to adapt faster to change – improving their planning and spending.&lt;/p&gt;
+
+&lt;p&gt;Forecasting has proven especially challenging during Covid-19, as the pandemic was totally unpredictable and made planning for 2020 and beyond really hard. Nonetheless forecasting is useful to have an idea of how the future might look like, given the history.&lt;/p&gt;
+
+&lt;p&gt;Remember that&lt;/p&gt;
+
+&lt;blockquote class=&quot;wp-block-quote&quot;&gt;
+  &lt;p&gt;
+    Past performance is no guarantee of future results
+  &lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;but using Prophet you feel a little bit like:&lt;/p&gt;
+
+&lt;div style=&quot;width:100%;height:0;padding-bottom:51%;position:relative;&quot;&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://giphy.com/gifs/black-and-white-bw-jim-carrey-mEcpw2615iy5y&quot;&gt;via GIPHY&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;what-is-facebook-prophet&quot;&gt;What is Facebook Prophet?&lt;/h3&gt;
+
+&lt;p&gt;Facebook Prophet it’s an open-source project first released in February 2017, that offers a forecasting procedure implemented with R and Python. It provides the ability to use human-interpretable parameters to improve the forecasts by adding your domain knowledge. The documentation, tutorials, and all relevant links to the code repository are available on the &lt;a rel=&quot;noreferrer noopener&quot; href=&quot;https://facebook.github.io/prophet/&quot; data-type=&quot;URL&quot; data-id=&quot;https://facebook.github.io/prophet/&quot; target=&quot;_blank&quot;&gt;project website&lt;/a&gt;.&lt;figure class=&quot;wp-block-image size-large&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img width=&quot;1024&quot; height=&quot;280&quot; src=&quot;https://foodfordata.com/wp-content/uploads/2021/02/Screenshot-from-2021-02-07-17-30-02-1024x280.png&quot; alt=&quot;&quot; class=&quot;wp-image-441&quot; srcset=&quot;http://foodfordata.com/wp-content/uploads/2021/02/Screenshot-from-2021-02-07-17-30-02-1024x280.png 1024w, http://foodfordata.com/wp-content/uploads/2021/02/Screenshot-from-2021-02-07-17-30-02-300x82.png 300w, http://foodfordata.com/wp-content/uploads/2021/02/Screenshot-from-2021-02-07-17-30-02-768x210.png 768w, http://foodfordata.com/wp-content/uploads/2021/02/Screenshot-from-2021-02-07-17-30-02.png 1483w&quot; sizes=&quot;(max-width: 1024px) 100vw, 1024px&quot; /&gt; &amp;lt;figcaption&amp;gt;Prophet project page homepage&amp;lt;/figcaption&amp;gt;&amp;lt;/figure&amp;gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;how-does-it-work&quot;&gt;How does it work?&lt;/h3&gt;
+
+&lt;p&gt;More information can be found in &lt;a rel=&quot;noreferrer noopener&quot; href=&quot;https://peerj.com/preprints/3190/&quot; target=&quot;_blank&quot;&gt;this paper&lt;/a&gt;, but this is what the procedure is trying to do. Suppose we have a time-series y(t):&lt;/p&gt;
+
+&lt;div class=&quot;wp-block-mathml-mathmlblock&quot;&gt;
+  \[y(t)= g(t) + s(t) + h(t) + ε_t \]
+&lt;/div&gt;
+
+&lt;p&gt;with those components:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;a trend g(t) that capture non-periodic changes&lt;/li&gt;
+  &lt;li&gt;a seasonal component s(t), which models for example weekly or yearly seasonality&lt;/li&gt;
+  &lt;li&gt;a holiday component h(t), to account for the effect of holidays or other occurrences with potentially a more irregular schedule.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Using time as a regressor Prophet is trying to fit several linear and non linear functions of time as components, minimising the error.&lt;/p&gt;
+
+&lt;h3 id=&quot;what-are-the-benefits&quot;&gt;What are the benefits?&lt;/h3&gt;
+
+&lt;p&gt;According to the website the main advantages are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Simplify the approach to forecasting, as is robust to outliers, missing data, and dramatic changes in your time series&lt;/li&gt;
+  &lt;li&gt;The model fitting uses &lt;a rel=&quot;noreferrer noopener&quot; href=&quot;https://mc-stan.org/&quot; target=&quot;_blank&quot;&gt;Stan&lt;/a&gt;, which improve performance&lt;/li&gt;
+  &lt;li&gt;It allows performance tuning using insight coming from the domain knowledge&lt;/li&gt;
+  &lt;li&gt;It’s available in both R and Python and completely open-source.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I’ll be using Python, as is the language I am more familiar with.&lt;/p&gt;
+
+&lt;p&gt;Success stories of using Prophet to scale forecasting, include Facebook themselves, but also &lt;a href=&quot;https://www.slideshare.net/NavinAlbert/how-starbucks-forecasts-demand-at-scale-with-facebook-prophet-and-databricks&quot;&gt;Starbucks&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-steps&quot;&gt;The steps&lt;/h3&gt;
+
+&lt;p&gt;These are the steps you generally need to follow if you want to generate a forecast for a time series using Prophet, with Python:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Setup&lt;/strong&gt;. Have an installation of Python 3 in your laptop compatible with Prophet&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Installation&lt;/strong&gt;. Install Facebook Prophet&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Time Series&lt;/strong&gt;. Have a time series in hand, in the form of a &lt;a rel=&quot;noreferrer noopener&quot; href=&quot;https://pandas.pydata.org/pandas-docs/stable/user_guide/dsintro.html#dataframe&quot; target=&quot;_blank&quot;&gt;DataFrame&lt;/a&gt; (Python equivalent of a table) with one column for time and one for the value of the series at that point in time&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Exploratory Data Analysis&lt;/strong&gt;. Analyse seasonality, holiday effects, or eventual segmentation of your series.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Predict&lt;/strong&gt;. Try out with forecasting with the default setting&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Diagnose&lt;/strong&gt;. Evaluate model performance, with the in-build &lt;a href=&quot;https://facebook.github.io/prophet/docs/diagnostics.html&quot;&gt;cross-validation function&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Optimise&lt;/strong&gt;. Tune parameters and re-evaluate. Usually, you predict, validate, and tune in a loop, until you’re happy with the error.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I’ll show an example following these steps in another post.&lt;/p&gt;</content><author><name>Martina Z</name></author><category term="Python" /><summary type="html">Reading Time: 3 minutes</summary></entry><entry><title type="html">Why I love dbt</title><link href="https://marzaccaro.github.io/blog/2020/09/03/why-i-love-dbt/" rel="alternate" type="text/html" title="Why I love dbt" /><published>2020-09-03T20:00:32+01:00</published><updated>2020-09-03T20:00:32+01:00</updated><id>https://marzaccaro.github.io/blog/2020/09/03/why-i-love-dbt</id><content type="html" xml:base="https://marzaccaro.github.io/blog/2020/09/03/why-i-love-dbt/">&lt;p&gt;&lt;span class=&quot;rt-reading-time&quot; style=&quot;display: block;&quot;&gt;&lt;span class=&quot;rt-label rt-prefix&quot;&gt;Reading Time: &lt;/span&gt; &lt;span class=&quot;rt-time&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;rt-label rt-postfix&quot;&gt;minutes&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;I am an analyst and since the early days I’ve found quite frustrating having to wait days, weeks or even months for the data to be available – because the data warehouse developers were busy, and felt I couldn’t add value or contribute doing what I knew: analysing data.&lt;/p&gt;
+
+&lt;p&gt;And I still remember my first job as a BI developer back in 2014 where I was using &lt;a rel=&quot;noreferrer noopener&quot; href=&quot;https://www.oracle.com/uk/middleware/technologies/bi-enterprise-edition.html&quot; target=&quot;_blank&quot;&gt;Oracle BI&lt;/a&gt;, and I needed to wait the transformation and loading to be completed, before I could do anything at all. That implies a waste not only because the BI developers can’t use their expertise in helping the design, but also because the agility of creating data value is greatly compromised [more on this in the section &lt;em&gt;Coupled pipeline decomposition&lt;/em&gt; of &lt;a href=&quot;https://martinfowler.com/articles/data-monolith-to-mesh.html&quot;&gt;this article&lt;/a&gt;].&lt;/p&gt;
+
+&lt;p&gt;Fast forward March 2019, my team at &lt;a href=&quot;https://www.simplybusiness.co.uk/&quot;&gt;Simply Business&lt;/a&gt; decided to introduce dbt, in wander for a more clear pipeline and a more robust analytics. The new paradigm is ELT (Extract, Load, Transform) instead of ETL (Extract, Transform, Load) because of the incredible computing power the cloud databases (&lt;a href=&quot;https://www.snowflake.com/&quot;&gt;Snowflake&lt;/a&gt;, &lt;a href=&quot;https://aws.amazon.com/redshift/?whats-new-cards.sort-by=item.additionalFields.postDateTime&amp;amp;whats-new-cards.sort-order=desc&quot; data-type=&quot;URL&quot; data-id=&quot;https://aws.amazon.com/redshift/?whats-new-cards.sort-by=item.additionalFields.postDateTime&amp;amp;whats-new-cards.sort-order=desc&quot;&gt;Redshift&lt;/a&gt;, &lt;a href=&quot;https://cloud.google.com/bigquery&quot;&gt;BigQuery&lt;/a&gt; among others) can bring to the table.&lt;/p&gt;
+
+&lt;p&gt;With this new approach, I no longer need to wait for someone to create the base tables for me to use in the reporting tool of choice, and what is most exciting I have a lot more freedom and flexibility to tailor my data structure to the needs of the reporting tool and the business requirements, iterating faster than ever before.&lt;/p&gt;
+
+&lt;p&gt;What it means is my role as well changed, and I am no longer building reports / reporting models waiting patiently for someone to load the clean and modelled data for me, but I can just wait for someone to load them and then rework and adapt the model to the business requirements, exposing the changes in the reporting layer with no waiting times. Some companies went on and even adopted some loaders like &lt;a rel=&quot;noreferrer noopener&quot; href=&quot;https://www.stitchdata.com/&quot; target=&quot;_blank&quot;&gt;Stitch&lt;/a&gt; or &lt;a href=&quot;https://fivetran.com/&quot;&gt;FiveTran&lt;/a&gt; to be able to load data from the data sources and make the loading even quicker.&lt;/p&gt;
+
+&lt;p&gt;This change means two main consequences on my role: &lt;strong&gt;more knowledge of the data sources and the relationship among them&lt;/strong&gt;, but also the responsibility [&lt;a href=&quot;https://en.wikipedia.org/wiki/With_great_power_comes_great_responsibility&quot;&gt;with more power comes more responsibility&lt;/a&gt;, the evergreen quote] to create something that is reusable rather than create a new table every time a new requirement come in: so understanding if it’s a case of &lt;strong&gt;adding to the existing content or create something else&lt;/strong&gt; to cover the new business questions arising.&lt;/p&gt;
+
+&lt;div class=&quot;wp-block-image&quot;&gt;
+  &lt;figure class=&quot;aligncenter is-resized&quot;&gt;&lt;img src=&quot;https://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721-1024x1024.jpg&quot; alt=&quot;&quot; class=&quot;wp-image-375&quot; width=&quot;309&quot; height=&quot;309&quot; srcset=&quot;http://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721-1024x1024.jpg 1024w, http://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721-300x300.jpg 300w, http://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721-150x150.jpg 150w, http://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721-768x768.jpg 768w, http://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721-200x200.jpg 200w, http://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721-320x320.jpg 320w, http://foodfordata.com/wp-content/uploads/2020/09/photo5947103406906782721.jpg 1280w&quot; sizes=&quot;(max-width: 309px) 100vw, 309px&quot; /&gt;&lt;figcaption&gt;My bitmoji, credit to Bitmoji &amp;amp; dbt for the logo. &lt;br /&gt;I feel a super-analyst, just thanks to dbt.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;/div&gt;
+
+&lt;p&gt;dbt is the T, the Trasform, in the ELT process, and the power that made me a &lt;strong&gt;super-analyst&lt;/strong&gt;: faster, more reliable and empowered to understand not only the business, but how the business needs are translated into a data model. That’s why I love dbt and I’ll try to describe it in some upcoming posts, hoping to spread the love.&lt;/p&gt;
+
+&lt;p&gt;Curious to know more? Start reading these blog posts:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://blog.getdbt.com/what--exactly--is-dbt-/&quot; target=&quot;_blank&quot; rel=&quot;noreferrer noopener&quot;&gt;What, exactly, is dbt?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://blog.getdbt.com/is-dbt-the-right-tool-for-my-data-transformations/&quot; target=&quot;_blank&quot; rel=&quot;noreferrer noopener&quot;&gt;Is dbt the right tool for my data transformations?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://highgrowthengineering.substack.com/p/why-is-dbt-so-important-&quot; target=&quot;_blank&quot; rel=&quot;noreferrer noopener&quot;&gt;Why dbt is so important?&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Feel like you want to listen to something, instead? [Trying to avoid screen time uh?] Try this podcast episode:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://softwareengineeringdaily.com/2020/03/09/dbt-data-build-tool-with-tristan-handy/&quot; target=&quot;_blank&quot; rel=&quot;noreferrer noopener&quot;&gt;Software Engineering Daily, DBT: Data Build Tool with Tristan Handy&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Want to learn by doing? Check out this &lt;a href=&quot;https://docs.getdbt.com/tutorial/setting-up/&quot;&gt;Tutorial&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Want to support your learning? The dbt community is just incredibly helpful and welcoming, you can join the &lt;a href=&quot;https://community.getdbt.com/&quot;&gt;slack channel&lt;/a&gt;, or check out the &lt;a href=&quot;https://discourse.getdbt.com/&quot;&gt;Discourse online&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;And finally they just re-launched &lt;a rel=&quot;noreferrer noopener&quot; href=&quot;https://www.getdbt.com/coalesce/&quot; target=&quot;_blank&quot;&gt;Coalesce 2020, 7-11 December&lt;/a&gt;, can’t wait to attend!&lt;/p&gt;</content><author><name>Martina Z</name></author><category term="dbt" /><summary type="html">Reading Time: 3 minutes</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://marzaccaro.github.io/blog/wp-content/uploads/2020/09/photo5947103406906782721.jpg" /><media:content medium="image" url="https://marzaccaro.github.io/blog/wp-content/uploads/2020/09/photo5947103406906782721.jpg" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Qualify</title><link href="https://marzaccaro.github.io/blog/2020/08/26/qualify/" rel="alternate" type="text/html" title="Qualify" /><published>2020-08-26T19:00:00+01:00</published><updated>2020-08-26T19:00:00+01:00</updated><id>https://marzaccaro.github.io/blog/2020/08/26/qualify</id><content type="html" xml:base="https://marzaccaro.github.io/blog/2020/08/26/qualify/">&lt;p&gt;&lt;span class=&quot;rt-reading-time&quot; style=&quot;display: block;&quot;&gt;&lt;span class=&quot;rt-label rt-prefix&quot;&gt;Reading Time: &lt;/span&gt; &lt;span class=&quot;rt-time&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;rt-label rt-postfix&quot;&gt;minutes&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;This is the second post about some Snowflake features, that I use often and find useful to write a better SQL. You can find the first of the series about aliasing &lt;a rel=&quot;noreferrer noopener&quot; href=&quot;https://foodfordata.com/2020/08/24/aliasing/&quot; data-type=&quot;URL&quot; data-id=&quot;https://foodfordata.com/2020/08/24/aliasing/&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h5 id=&quot;what-is-it&quot;&gt;What is it?&lt;/h5&gt;
+
+&lt;p&gt;Have you ever been in the situation where you want to keep all rows of your query but than filter the result set based on a condition you would get from a subset of it? Let me clarify this with some examples:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Suppose you are tracking all the interactions with a website and you want to see what happened after a specific action took place: then you would want to keep all events for those customers that have a specific event in their event stream.&lt;/li&gt;
+  &lt;li&gt;Suppose you sell multiple products per customers and you want to see all the purchase history of the customers that have a very specific product as last purchase.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Let’s stick with this second example. In that case you would have a table looking like this, let’s call it &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;purchases&lt;/code&gt;:&lt;figure class=&quot;wp-block-table is-style-regular&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;customer_id&lt;/th&gt;
+      &lt;th&gt;product&lt;/th&gt;
+      &lt;th&gt;purchased_date&lt;/th&gt;
+      &lt;th&gt; &lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;(YYYY-MM-DD)&lt;/th&gt;
+      &lt;th&gt; &lt;/th&gt;
+      &lt;th&gt; &lt;/th&gt;
+      &lt;th&gt; &lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;A&lt;/td&gt;
+      &lt;td&gt;2020-04-01&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;B&lt;/td&gt;
+      &lt;td&gt;2020-05-03&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;A&lt;/td&gt;
+      &lt;td&gt;2020-03-01&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;B&lt;/td&gt;
+      &lt;td&gt;2020-04-01&lt;/td&gt;
+      &lt;td&gt;&amp;lt;/figure&amp;gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;So customer 1 and 3 last purchase was product B, and customer 2 last purchase was product A. Now suppose you want to filter in your data only the customers that purchased B as last product, for an analysis you’re doing.&lt;/p&gt;
+
+&lt;p&gt;What you would do, without using the qualify statement, would be something like this:&lt;/p&gt;
+
+&lt;pre class=&quot;EnlighterJSRAW&quot; data-enlighter-language=&quot;sql&quot; data-enlighter-theme=&quot;&quot; data-enlighter-highlight=&quot;&quot; data-enlighter-linenumbers=&quot;&quot; data-enlighter-lineoffset=&quot;&quot; data-enlighter-title=&quot;&quot; data-enlighter-group=&quot;&quot;&gt;with product_purchased_order as (
+select 
+  customer_id
+  , product
+  , row_number() over (partition by customer_id order by purchased_date desc) as n_last_order_nr
+from purchases
+)
+select customer_id 
+from product_purchased_order
+where n_last_order_nr = 1 and product ='B'&lt;/pre&gt;
+
+&lt;p&gt;You see that I have to use at least two queries: first the window statement and the where clause to filter the results I want. There are many other way to get to the same result, but let’s see how to simplify the query.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;qualify&lt;/code&gt; expression allows to rewrite the statement above to read nicely and in one single query. Here you go:&lt;/p&gt;
+
+&lt;pre class=&quot;EnlighterJSRAW&quot; data-enlighter-language=&quot;sql&quot; data-enlighter-theme=&quot;&quot; data-enlighter-highlight=&quot;&quot; data-enlighter-linenumbers=&quot;&quot; data-enlighter-lineoffset=&quot;&quot; data-enlighter-title=&quot;&quot; data-enlighter-group=&quot;&quot;&gt;select 
+  customer_id
+  , product 
+  , last_value( product ) over (partition by customer_id order by purchased_date) as last_product_purchased
+from purchases
+qualify last_product_purchased = 'B'&lt;/pre&gt;
+
+&lt;p&gt;Note the benefits of using this second option:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;I can write only one query&lt;/li&gt;
+  &lt;li&gt;I can keep in the same query all the fields in the base table: in this case all the purchase history, even though I am just keeping the customer that have bought B as last product – I can still see all the products they purchased.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;When analysing something, you often want to filter by a condition on a partition, but keep all the records at a lower granularity – that is where the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;qualify&lt;/code&gt; come in handy. Note also how using the alias in the query above made the statement more clear.&lt;/p&gt;
+
+&lt;h5 id=&quot;where-does-the-qualify-clause-this-fit&quot;&gt;Where does the qualify clause this fit?&lt;/h5&gt;
+
+&lt;p&gt;From the Snowflake &lt;a rel=&quot;noreferrer noopener&quot; href=&quot;https://docs.snowflake.com/en/sql-reference/constructs.html&quot; target=&quot;_blank&quot;&gt;general query syntax reference&lt;/a&gt; you get this general outline:&lt;/p&gt;
+
+&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code&gt;&amp;#91; WITH ... ]
+SELECT
+   &amp;#91; TOP &amp;lt;n&amp;gt; ]
+   ...
+&amp;#91; FROM ...
+   &amp;#91; AT | BEFORE ... ]
+   &amp;#91; CHANGES ... ]
+   &amp;#91; CONNECT BY ... ]
+   &amp;#91; JOIN ... ]
+   &amp;#91; PIVOT | UNPIVOT ... ] ]
+   &amp;#91; VALUES ... ]
+   &amp;#91; SAMPLE ... ]
+&amp;#91; WHERE ... ]
+&amp;#91; GROUP BY ...
+   &amp;#91; HAVING ... ] ]
+&amp;#91; QUALIFY ... ]
+&amp;#91; ORDER BY ... ]
+&amp;#91; LIMIT ... ]&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So, the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;qualify&lt;/code&gt; sit in the query order right after the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;having&lt;/code&gt; (if present) but before the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;order by&lt;/code&gt; and the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;limit&lt;/code&gt; clauses.&lt;/p&gt;
+
+&lt;p&gt;It’s also possible to not include the window function you are filtering by in the select list, which is good in case you don’t want to show the value you are filtering on, for example in the previous query something like:&lt;/p&gt;
+
+&lt;pre class=&quot;EnlighterJSRAW&quot; data-enlighter-language=&quot;sql&quot; data-enlighter-theme=&quot;&quot; data-enlighter-highlight=&quot;&quot; data-enlighter-linenumbers=&quot;&quot; data-enlighter-lineoffset=&quot;&quot; data-enlighter-title=&quot;&quot; data-enlighter-group=&quot;&quot;&gt;select 
+  customer_id
+  , product
+from purchases
+qualify last_value( product ) over (partition by customer_id order by purchased_date) = 'B'&lt;/pre&gt;
+
+&lt;p&gt;Which could be good if the additional field is redundant or used just for filtering.&lt;/p&gt;
+
+&lt;p&gt;That’s it for today! Hope you’ll start getting rid of some extra CTEs / sub-queries, thanks to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;qualify&lt;/code&gt; or, why not, have better time writing the logic to get some fancy slice of your data, based on whatever complex condition.&lt;/p&gt;
+
+&lt;p&gt;Have you used the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;qualify&lt;/code&gt; statement? What are the pros and cons about it? Any warnings that you want to share? Let me know!&lt;/p&gt;</content><author><name>Martina Z</name></author><category term="Snowflake" /><summary type="html">Reading Time: 3 minutes</summary></entry><entry><title type="html">Aliasing</title><link href="https://marzaccaro.github.io/blog/2020/08/24/aliasing/" rel="alternate" type="text/html" title="Aliasing" /><published>2020-08-24T18:53:50+01:00</published><updated>2020-08-24T18:53:50+01:00</updated><id>https://marzaccaro.github.io/blog/2020/08/24/aliasing</id><content type="html" xml:base="https://marzaccaro.github.io/blog/2020/08/24/aliasing/">&lt;p&gt;&lt;span class=&quot;rt-reading-time&quot; style=&quot;display: block;&quot;&gt;&lt;span class=&quot;rt-label rt-prefix&quot;&gt;Reading Time: &lt;/span&gt; &lt;span class=&quot;rt-time&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;rt-label rt-postfix&quot;&gt;minutes&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;I’ll be starting a series of posts about some cool &lt;a rel=&quot;noreferrer noopener&quot; href=&quot;https://www.snowflake.com/&quot; target=&quot;_blank&quot;&gt;Snowflake&lt;/a&gt; (The cloud data platform) features, that makes SnowSQL really cool – compared to other SQL dialect (I am most familiar with Microsoft SQL Server or T-SQL).&lt;/p&gt;
+
+&lt;p&gt;I’ll start the series, talking about &lt;strong&gt;aliasing&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Sometimes our SQL get really complex: who haven’t seen a nested case statement grows exponentially? so much that after a while you can’t understand anymore if the output is what is supposed to be, and same for window functions.&lt;/p&gt;
+
+&lt;p&gt;The suggestion when complexity arise is usually “break down the problem in smaller steps”, and that’s where aliasing can help the most writing your SQL queries.&lt;/p&gt;
+
+&lt;p&gt;Snowflake features of aliasing allows you to re-use the same SQL block in another column definition and simplify massively your code, making it more understandable.&lt;/p&gt;
+
+&lt;p&gt;For example you might have a SQL like this:&lt;/p&gt;
+
+&lt;pre class=&quot;EnlighterJSRAW&quot; data-enlighter-language=&quot;sql&quot; data-enlighter-theme=&quot;&quot; data-enlighter-highlight=&quot;&quot; data-enlighter-linenumbers=&quot;&quot; data-enlighter-lineoffset=&quot;&quot; data-enlighter-title=&quot;&quot; data-enlighter-group=&quot;&quot;&gt;select 
+  case 
+    when price &amp;gt; 100 and referral_code  = 'XXX1' then price * 0.9
+    when referral_code = 'XX2' then price*0.75
+    when referral_code = 'XX3' then price - 10 
+    else price end as discounted_price,
+  case 
+    when partner = 'A' then discounted_price*0.2
+    when partner = 'B' then discounted_price*0.3
+    else discounted_price end as partner_fee
+from my_table&lt;/pre&gt;
+
+&lt;p&gt;So this is the new alternative, without the aliasing capability (for example in a database like SQL Server, you would have to explicitly re-write the logic for the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;discounted_price&lt;/code&gt; twice (not DRY, &lt;a rel=&quot;noreferrer noopener&quot; href=&quot;https://en.wikipedia.org/wiki/Don%27t_repeat_yourself&quot; target=&quot;_blank&quot;&gt;Don’t Repeat Yourself&lt;/a&gt;) or create a function in the database (&lt;a rel=&quot;noreferrer noopener&quot; href=&quot;https://docs.microsoft.com/en-us/sql/t-sql/statements/create-function-transact-sql?view=sql-server-ver15&quot; target=&quot;_blank&quot;&gt;like this&lt;/a&gt;). So much neater using the alias!&lt;/p&gt;
+
+&lt;p&gt;Moreover you can use those aliases in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;where&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;group by&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;having&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;qualify&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;order by&lt;/code&gt; statement, saving you from copying the same logic multiple times in your query.&lt;/p&gt;
+
+&lt;p&gt;Here is another example:&lt;/p&gt;
+
+&lt;pre class=&quot;EnlighterJSRAW&quot; data-enlighter-language=&quot;sql&quot; data-enlighter-theme=&quot;&quot; data-enlighter-highlight=&quot;&quot; data-enlighter-linenumbers=&quot;&quot; data-enlighter-lineoffset=&quot;&quot; data-enlighter-title=&quot;&quot; data-enlighter-group=&quot;&quot;&gt;select 
+  first_name,
+  last_name,
+  first_name || ' ' || last_name as full_name
+from names
+where full_name = 'My Full Name'&lt;/pre&gt;
+
+&lt;p&gt;In general this feature is amazing, but there are a couple cases where it might trick you. In particular: alias don’t override existing columns names and can have unexpected behaviour when used in join clauses.&lt;/p&gt;
+
+&lt;h5 id=&quot;alias-conflicting-with-existing-columns-names&quot;&gt;Alias conflicting with existing columns names&lt;/h5&gt;
+
+&lt;p&gt;Snowflake doesn’t infer the alias if you create an alias that is already a columns in one of the tables you join. Suppose the tables look like these:&lt;/p&gt;
+
+&lt;p&gt;first table t1:&lt;figure class=&quot;wp-block-table is-style-regular&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;id&lt;/th&gt;
+      &lt;th&gt;email_address&lt;/th&gt;
+      &lt;th&gt; &lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;12&lt;/td&gt;
+      &lt;td&gt;foo@com&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;13&lt;/td&gt;
+      &lt;td&gt;hola@com&lt;/td&gt;
+      &lt;td&gt;&amp;lt;/figure&amp;gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;second table t2:&lt;figure class=&quot;wp-block-table&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;my_id&lt;/th&gt;
+      &lt;th&gt;email_address&lt;/th&gt;
+      &lt;th&gt; &lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;12&lt;/td&gt;
+      &lt;td&gt;food@com&lt;/td&gt;
+      &lt;td&gt;&amp;lt;/figure&amp;gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The following query&lt;/p&gt;
+
+&lt;pre class=&quot;EnlighterJSRAW&quot; data-enlighter-language=&quot;sql&quot; data-enlighter-theme=&quot;&quot; data-enlighter-highlight=&quot;&quot; data-enlighter-linenumbers=&quot;&quot; data-enlighter-lineoffset=&quot;&quot; data-enlighter-title=&quot;&quot; data-enlighter-group=&quot;&quot;&gt;select 
+  t1.id
+  , coalesce( t2.email_address, t1.email_address) as email_address
+from t1
+left join t2
+  on t1.id = t2.my_id
+where email_address = 'foo@com'&lt;/pre&gt;
+
+&lt;p&gt;will give you an error of ambiguous column name, so you’ll need to specify the table for the column you want to use or rename the column alias to be something different from the column names already existing in your tables.&lt;/p&gt;
+
+&lt;h5 id=&quot;alias-used-in-joins&quot;&gt;Alias used in joins.&lt;/h5&gt;
+
+&lt;p&gt;Snowflake doesn’t like aliases in joins, suppose we have two tables above, and say you want to rename the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;my_id&lt;/code&gt; of the second table to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;new_id&lt;/code&gt; :&lt;/p&gt;
+
+&lt;pre class=&quot;EnlighterJSRAW&quot; data-enlighter-language=&quot;sql&quot; data-enlighter-theme=&quot;&quot; data-enlighter-highlight=&quot;&quot; data-enlighter-linenumbers=&quot;&quot; data-enlighter-lineoffset=&quot;&quot; data-enlighter-title=&quot;&quot; data-enlighter-group=&quot;&quot;&gt;select 
+  t1.id
+  ,t2.my_id as new_id
+from t1
+left join t2 
+  on t1.id = t2.new_id&lt;/pre&gt;
+
+&lt;p&gt;Will give you an error of unknown column names, so careful when using aliases in the join.&lt;/p&gt;
+
+&lt;p&gt;To summarise, aliases are amazing to simplify your code and stay DRY but needs to be used with care when joining tables.&lt;/p&gt;
+
+&lt;p&gt;Hope you too loves aliases, or start using them after reading this post! Did you find any other troubles using them? Let me know.&lt;/p&gt;</content><author><name>Martina Z</name></author><category term="Snowflake" /><summary type="html">Reading Time: 2 minutes</summary></entry><entry><title type="html">Snowflake vs Redshift: some syntax differences.</title><link href="https://marzaccaro.github.io/blog/2019/10/13/snowflake-vs-redshift-some-syntax-differences/" rel="alternate" type="text/html" title="Snowflake vs Redshift: some syntax differences." /><published>2019-10-13T12:30:20+01:00</published><updated>2019-10-13T12:30:20+01:00</updated><id>https://marzaccaro.github.io/blog/2019/10/13/snowflake-vs-redshift-some-syntax-differences</id><content type="html" xml:base="https://marzaccaro.github.io/blog/2019/10/13/snowflake-vs-redshift-some-syntax-differences/">&lt;p&gt;&lt;span class=&quot;rt-reading-time&quot; style=&quot;display: block;&quot;&gt;&lt;span class=&quot;rt-label rt-prefix&quot;&gt;Reading Time: &lt;/span&gt; &lt;span class=&quot;rt-time&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;rt-label rt-postfix&quot;&gt;minutes&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;moving-code-from-redshift-to-snowflake&quot;&gt;Moving code from Redshift to Snowflake&lt;/h4&gt;
+
+&lt;p&gt;As I said &lt;a rel=&quot;noreferrer noopener&quot; aria-label=&quot;here, (opens in a new tab)&quot; href=&quot;https://foodfordata.com/2019/09/29/querying-a-snowflake-database/&quot; target=&quot;_blank&quot;&gt;here,&lt;/a&gt; my company is in the process of moving from Redshift to Snowflake. There are loads of reasons for doing it: to mention a few, better handling of permissions, less maintenance and less effort to optimise query performance.&lt;/p&gt;
+
+&lt;h4 id=&quot;a-really-good-article-as-a-starting-point&quot;&gt;A really good article as a starting point.&lt;/h4&gt;
+
+&lt;p&gt;I start reading around for differences between the two syntax in preparation to move lots of SQL scripts from Redshift to Snowflake, and &lt;a rel=&quot;noreferrer noopener&quot; aria-label=&quot;this article (opens in a new tab)&quot; href=&quot;https://medium.com/@jthandy/how-compatible-are-redshift-and-snowflakes-sql-syntaxes-c2103a43ae84&quot; target=&quot;_blank&quot;&gt;this article&lt;/a&gt; explains well the major differences regarding:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Window functions&lt;/li&gt;
+  &lt;li&gt;Timestamps’ operations and time-zones&lt;/li&gt;
+  &lt;li&gt;Casing and quotes&lt;/li&gt;
+  &lt;li&gt;General less forgiveness of Snowflake over Redshift in functions and datatype conversions&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This article helped me a lot as starting point, to understand what could be the potential issue when the query was not running, but sometimes Snowflake error messages aren’t clear enough, and it’s hard to figure out what the issue is. So during the migration we decided to keep a log of all the differences in syntax that we found.&lt;/p&gt;
+
+&lt;p&gt;I’ll list them below, hopefully is helpful for other people dealing with a Redshift to Snowflake migration.&lt;/p&gt;
+
+&lt;h4 id=&quot;more-timestamps-issues&quot;&gt;More timestamps issues&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GETDATE()&lt;/code&gt; is no longer supported, but you can use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CURRENT_TIMESTAMP&lt;/code&gt; to get the current timestamp and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CURRENT_DATE&lt;/code&gt; to get the current date. This syntax is also compatible with Redshift so you can safely replace all your &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GETDATE()&lt;/code&gt; with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CURRENT_TIMESTAMP&lt;/code&gt; , remembering to convert to a specific timezone if needed.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DATEPART&lt;/code&gt; is not allowed in Snowflake, but you can use the equivalent &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DATE_PART&lt;/code&gt;, with exactly the same structure, checkout the documentation &lt;a rel=&quot;noreferrer noopener&quot; aria-label=&quot;here. (opens in a new tab)&quot; href=&quot;https://docs.snowflake.net/manuals/sql-reference/functions/date_part.html&quot; target=&quot;_blank&quot;&gt;here.&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;more-cast-issues&quot;&gt;More cast issues&lt;/h4&gt;
+
+&lt;p&gt;When casting, Snowflake is less forgiving than Redshift, but has built in functions to better deal with those, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TRY_CAST&lt;/code&gt; that will return &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NULL&lt;/code&gt; if the conversion cannot be performed. The function can be used only if the input is of type &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;string&lt;/code&gt;,  when the input is numeric use instead &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TRY_TO_DECIMAL&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TRY_TO_NUMBER&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TRY_TO_NUMERIC&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The function &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CONVERT&lt;/code&gt; does not exist any longer, but &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CAST&lt;/code&gt; is a safe alternative.&lt;/p&gt;
+
+&lt;h4 id=&quot;boolean-and-null&quot;&gt;Boolean and NULL&lt;/h4&gt;
+
+&lt;p&gt;With Redshift a syntax like:&lt;/p&gt;
+
+&lt;pre class=&quot;EnlighterJSRAW&quot; data-enlighter-language=&quot;sql&quot; data-enlighter-theme=&quot;&quot; data-enlighter-highlight=&quot;&quot; data-enlighter-linenumbers=&quot;&quot; data-enlighter-lineoffset=&quot;&quot; data-enlighter-title=&quot;&quot; data-enlighter-group=&quot;&quot;&gt;CASE WHEN a is true THEN 'Yes' ELSE 'No' END &lt;/pre&gt;
+
+&lt;p&gt;will work, in Snowflake &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;is&lt;/code&gt; is allowed only for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NULL&lt;/code&gt; identity verification, not for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BOOLEAN&lt;/code&gt;, so the above should be rewritten as&lt;/p&gt;
+
+&lt;pre class=&quot;EnlighterJSRAW&quot; data-enlighter-language=&quot;sql&quot; data-enlighter-theme=&quot;&quot; data-enlighter-highlight=&quot;&quot; data-enlighter-linenumbers=&quot;&quot; data-enlighter-lineoffset=&quot;&quot; data-enlighter-title=&quot;&quot; data-enlighter-group=&quot;&quot;&gt;-- similar:
+CASE WHEN a = true THEN 'Yes' ELSE 'No' END
+
+-- using IFF:
+IFF( a, 'Yes', 'No')&lt;/pre&gt;
+
+&lt;p&gt;Snowflake, in fact, have an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IFF&lt;/code&gt; function, less verbose than &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CASE&lt;/code&gt; for when only one condition need to be checked.&lt;/p&gt;
+
+&lt;p&gt;Snowflake does not infer a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BOOL&lt;/code&gt; type from `` and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1&lt;/code&gt;, so something like&lt;/p&gt;
+
+&lt;pre class=&quot;EnlighterJSRAW&quot; data-enlighter-language=&quot;sql&quot; data-enlighter-theme=&quot;&quot; data-enlighter-highlight=&quot;&quot; data-enlighter-linenumbers=&quot;&quot; data-enlighter-lineoffset=&quot;&quot; data-enlighter-title=&quot;&quot; data-enlighter-group=&quot;&quot;&gt;-- here b is a number with value 1 or 0:
+SELECT CASE WHEN b THEN 'Yes' ELSE 'No' END&lt;/pre&gt;
+
+&lt;p&gt;will not work on Snowflake, you can convert to a condition on the field, so &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;b=1&lt;/code&gt; or do &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TO_BOOLEAN(b)&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TRY_BOOLEAN(b)&lt;/code&gt; for a safer result.&lt;/p&gt;
+
+&lt;p&gt;Another difference is in the Redshift function &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ISNULL(a,0)&lt;/code&gt;, this is no longer available and it needs to be replaced with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IFNULL(a,0)&lt;/code&gt;, where this returns `` when the field &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;a&lt;/code&gt; is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NULL&lt;/code&gt;. Or even better you can use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;COALESCE(a,0)&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NVL(a,0)&lt;/code&gt; that are supported by both databases, and return the same result.&lt;/p&gt;
+
+&lt;h4 id=&quot;string-functions&quot;&gt;String functions&lt;/h4&gt;
+
+&lt;p&gt;Some issues with string function might occur too. The string concatenation operator is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;||&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;+&lt;/code&gt; gives an error message:&lt;/p&gt;
+
+&lt;pre class=&quot;EnlighterJSRAW&quot; data-enlighter-language=&quot;sql&quot; data-enlighter-theme=&quot;&quot; data-enlighter-highlight=&quot;&quot; data-enlighter-linenumbers=&quot;&quot; data-enlighter-lineoffset=&quot;&quot; data-enlighter-title=&quot;&quot; data-enlighter-group=&quot;&quot;&gt;-- working in Snowflake:
+SELECT 'Snowflake' || ' is great' 
+
+-- not working in Snowflake:
+SELECT 'Snowflake' + ' is great'&lt;/pre&gt;
+
+&lt;p&gt;To remove left and right trailing spaces you would use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TRIM&lt;/code&gt;, valid in both databases, but &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BTRIM&lt;/code&gt; that was doing the same in Redshift is not a valid function in Snowflake.&lt;/p&gt;
+
+&lt;p&gt;The only syntax allowed in both databases to get the length of a string is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LENGTH&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LEN&lt;/code&gt; is not valid anymore.&lt;/p&gt;
+
+&lt;p&gt;The equivalent of the hash function &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FUNC_SHA1&lt;/code&gt; is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SHA1&lt;/code&gt; , so use this one with the same structure.&lt;/p&gt;
+
+&lt;h4 id=&quot;parsing-json&quot;&gt;Parsing JSON&lt;/h4&gt;
+
+&lt;p&gt;Contrary to Redshift, Snowflake allows a better handling of unstructured data so you can query JSON objects more easily. Suppose you have a JSON in the format:&lt;/p&gt;
+
+&lt;pre class=&quot;EnlighterJSRAW&quot; data-enlighter-language=&quot;sql&quot; data-enlighter-theme=&quot;&quot; data-enlighter-highlight=&quot;&quot; data-enlighter-linenumbers=&quot;&quot; data-enlighter-lineoffset=&quot;&quot; data-enlighter-title=&quot;&quot; data-enlighter-group=&quot;&quot;&gt;my_json = '{&quot;f2&quot;:
+  {&quot;f3&quot;:1},
+ &quot;f4&quot;:
+  {&quot;f5&quot;:99,
+   &quot;f6&quot;:&quot;star&quot;}
+}'&lt;/pre&gt;
+
+&lt;p&gt;to get &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;star&lt;/code&gt; from it in Redshift you would need:&lt;/p&gt;
+
+&lt;pre class=&quot;EnlighterJSRAW&quot; data-enlighter-language=&quot;sql&quot; data-enlighter-theme=&quot;&quot; data-enlighter-highlight=&quot;&quot; data-enlighter-linenumbers=&quot;&quot; data-enlighter-lineoffset=&quot;&quot; data-enlighter-title=&quot;&quot; data-enlighter-group=&quot;&quot;&gt;select json_extract_path_text( my_json,'f4','f6')&lt;/pre&gt;
+
+&lt;p&gt;in Snowflake:&lt;/p&gt;
+
+&lt;pre class=&quot;EnlighterJSRAW&quot; data-enlighter-language=&quot;sql&quot; data-enlighter-theme=&quot;&quot; data-enlighter-highlight=&quot;&quot; data-enlighter-linenumbers=&quot;&quot; data-enlighter-lineoffset=&quot;&quot; data-enlighter-title=&quot;&quot; data-enlighter-group=&quot;&quot;&gt;select parse_json( my_json:f4.f6 )&lt;/pre&gt;
+
+&lt;p&gt;To know more about how to deal with JSON and semi-structured data, have a look at &lt;a href=&quot;https://docs.snowflake.net/manuals/user-guide/querying-semistructured.html&quot;&gt;this document&lt;/a&gt; or &lt;a href=&quot;https://community.snowflake.com/s/article/json-data-parsing-in-snowflake&quot;&gt;this post&lt;/a&gt; in the Snowflake community.&lt;/p&gt;
+
+&lt;p&gt;Sometimes the syntax differences are hard to spot, and you end up losing a lot of time troubleshooting, a good idea is try to comment out pieces of your SQL and then test out functions and syntax in an easier example.&lt;/p&gt;
+
+&lt;p&gt;Hope you find this useful. What other differences did you spot moving your queries to Snowflake?&lt;/p&gt;</content><author><name>Martina Z</name></author><category term="Snowflake" /><summary type="html">Reading Time: 3 minutes</summary></entry><entry><title type="html">Let’s practice with this month #SWDchallenge.</title><link href="https://marzaccaro.github.io/blog/2019/10/06/lets-practice-with-this-month-swdchallenge/" rel="alternate" type="text/html" title="Let’s practice with this month #SWDchallenge." /><published>2019-10-06T22:25:16+01:00</published><updated>2019-10-06T22:25:16+01:00</updated><id>https://marzaccaro.github.io/blog/2019/10/06/lets-practice-with-this-month-swdchallenge</id><content type="html" xml:base="https://marzaccaro.github.io/blog/2019/10/06/lets-practice-with-this-month-swdchallenge/">&lt;p&gt;&lt;span class=&quot;rt-reading-time&quot; style=&quot;display: block;&quot;&gt;&lt;span class=&quot;rt-label rt-prefix&quot;&gt;Reading Time: &lt;/span&gt; &lt;span class=&quot;rt-time&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;rt-label rt-postfix&quot;&gt;minutes&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;swdchallenge-and-where-to-find-them&quot;&gt;#SWDchallenge and where to find them&lt;/h4&gt;
+
+&lt;p&gt;One of my favourite author about data visualisation, Cole N. Knaflic, published a new book &lt;em&gt;&lt;a rel=&quot;noreferrer noopener&quot; aria-label=&quot; (opens in a new tab)&quot; href=&quot;https://www.amazon.com/gp/product/1119621496/ref=as_li_qf_asin_il_tl?imprToken=MXc2dye5HuMafi41a0kHIA&amp;amp;slotNum=2&amp;amp;creative=9325&amp;amp;creativeASIN=1119621496&amp;amp;ie=UTF8&amp;amp;linkCode=w61&amp;amp;linkId=c74bc50a287b2986edae7e3b95f9f5f4&amp;amp;tag=storytellingwithdata-20&quot; target=&quot;_blank&quot;&gt;Storytelling with data: Let’s Practice!&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;I am keen of getting my own copy, but while waiting I decided to take part in this month challenge. If you’re interested too, she launch one every month on her &lt;a rel=&quot;noreferrer noopener&quot; aria-label=&quot;website. (opens in a new tab)&quot; href=&quot;http://www.storytellingwithdata.com/&quot; target=&quot;_blank&quot;&gt;website.&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;october-2019-swdchallenge&quot;&gt;October 2019 SWDchallenge&lt;/h4&gt;
+
+&lt;p&gt;This is the extract from the latest post. I’ll follow the steps.&lt;figure class=&quot;wp-block-image&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;![Exercise 2.1&lt;/td&gt;
+      &lt;td&gt;Knaflic, Cole.  Storytelling With Data: Letâs Practice!  Wiley, Â© 2019.](https://images.squarespace-cdn.com/content/v1/55b6a6dce4b089e11621d3ed/1569866960440-ILA3DGUHPQZQUO3F98VY/ke17ZwdGBToddI8pDm48kFq85IBSQimBW5vU3jIslaIUqsxRUqqbr1mOJYKfIPR7LoDQ9mXPOjoJoqy81S2I8PaoYXhp6HxIwZIk7-Mi3Tsic-L2IOPH3Dwrhl-Ne3Z2EMBHxCcfLnzTQpwko3MaGDteolNhPNWFS-NzayplzSEKMshLAGzx4R3EDFOm1kBS/Exercise+2.1+%2855%29.png?format=750w) &amp;lt;figcaption&amp;gt;Extract from www.storytellingwithdata.com for this challenge&amp;lt;/figcaption&amp;gt;&amp;lt;/figure&amp;gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h4 id=&quot;step-1&quot;&gt;Step 1&lt;/h4&gt;
+
+&lt;p&gt;My assumptions are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The tiers are ordered by best to last (A to D)&lt;/li&gt;
+  &lt;li&gt;As the sum of % of Accounts doesn’t sum up to 100% and neither the % Revenue – either I have missing tiers or this is the just the new clients, but then I’ve just had a really good year if my revenue growth has been so big.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I would ask where the is the revenue missing to the 100%.&lt;/p&gt;
+
+&lt;h4 id=&quot;step-2&quot;&gt;Step 2&lt;/h4&gt;
+
+&lt;p&gt;This is how I re-designed the table using Google Sheets.&lt;figure class=&quot;wp-block-image&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img width=&quot;797&quot; height=&quot;300&quot; src=&quot;https://foodfordata.com/wp-content/uploads/2019/10/Screenshot-from-2019-10-06-20-57-34.png&quot; alt=&quot;&quot; class=&quot;wp-image-273&quot; srcset=&quot;http://foodfordata.com/wp-content/uploads/2019/10/Screenshot-from-2019-10-06-20-57-34.png 797w, http://foodfordata.com/wp-content/uploads/2019/10/Screenshot-from-2019-10-06-20-57-34-300x113.png 300w, http://foodfordata.com/wp-content/uploads/2019/10/Screenshot-from-2019-10-06-20-57-34-768x289.png 768w&quot; sizes=&quot;(max-width: 797px) 100vw, 797px&quot; /&gt; &amp;lt;figcaption&amp;gt;My re-design&amp;lt;/figcaption&amp;gt;&amp;lt;/figure&amp;gt;&lt;/p&gt;
+
+&lt;p&gt;Here is the list of actions, and my thoughts behind them.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Kept the order of the tiers, assuming the order have a meaning&lt;/li&gt;
+  &lt;li&gt;Right align the numbers and percentage – to make the scan and comparison quicker for the reader&lt;/li&gt;
+  &lt;li&gt;Delete background in the titles as the contrast wasn’t great for readability&lt;/li&gt;
+  &lt;li&gt;Remove the alternate line background, as the new line separation is already enough&lt;/li&gt;
+  &lt;li&gt;Added the unit and currency to each value in the table – to make it clear we are talking Million $, and remove it from the title as unnecessary&lt;/li&gt;
+  &lt;li&gt;Added the Other tier – so that we have the whole and not just part of it, this is following my assumption at step 1.&lt;/li&gt;
+  &lt;li&gt;I made the % italic, to sort of create a link between numbers and related %&lt;/li&gt;
+  &lt;li&gt;Use the default font of Google sheet, for consistency.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;step-3&quot;&gt;Step 3&lt;/h4&gt;
+
+&lt;p&gt;The title of the table and the exercise suggest to look at the tier share in terms of number of accounts and revenue, and compare those two.&lt;/p&gt;
+
+&lt;p&gt;I decided to stick with a simple visual, a column chart where I compare only the revenue and account share for the top tiers (so I excluded the Other bucket).&lt;figure class=&quot;wp-block-image&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img width=&quot;835&quot; height=&quot;475&quot; src=&quot;http://foodfordata.com/wp-content/uploads/2019/10/Account-share-vs-revenue-share-for-new-client-top-tiers.png&quot; alt=&quot;&quot; class=&quot;wp-image-275&quot; srcset=&quot;http://foodfordata.com/wp-content/uploads/2019/10/Account-share-vs-revenue-share-for-new-client-top-tiers.png 835w, http://foodfordata.com/wp-content/uploads/2019/10/Account-share-vs-revenue-share-for-new-client-top-tiers-300x171.png 300w, http://foodfordata.com/wp-content/uploads/2019/10/Account-share-vs-revenue-share-for-new-client-top-tiers-768x437.png 768w&quot; sizes=&quot;(max-width: 835px) 100vw, 835px&quot; /&gt; &amp;lt;figcaption&amp;gt;Chart to compare accounts share and revenue share&amp;lt;/figcaption&amp;gt;&amp;lt;/figure&amp;gt;&lt;/p&gt;
+
+&lt;p&gt;Again I used Google Sheet, selecting the column chart and putting the two share % side to side for an easier comparison.&lt;/p&gt;
+
+&lt;p&gt;I put the legend on the top left, to be picked up first thing by the user and kept the order of the tiers.&lt;/p&gt;
+
+&lt;p&gt;Now having them side to side I can see how A, A+ are giving most of the revenue, while forming only 9% of all accounts. While C, D give 17% of the revenue, but has 4 times more accounts.&lt;/p&gt;
+
+&lt;p&gt;I went for a black and grey version, bit old style and boring, but as effective – and will be the same if printed!&lt;/p&gt;
+
+&lt;p&gt;The link with both the data, the table and the chart can be found &lt;a rel=&quot;noreferrer noopener&quot; aria-label=&quot;here (opens in a new tab)&quot; href=&quot;https://drive.google.com/file/d/1mFxZeLLoquP5pmk4zS6HnpXolK-Ib1DI/view?usp=sharing&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt;. Hope you find this post useful, I will submit this on the SWDchallenge!&lt;/p&gt;</content><author><name>Martina Z</name></author><category term="Data visualisation" /><summary type="html">Reading Time: 3 minutes</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://marzaccaro.github.io/blog/wp-content/uploads/2019/10/Account-share-vs-revenue-share-for-new-client-top-tiers.png" /><media:content medium="image" url="https://marzaccaro.github.io/blog/wp-content/uploads/2019/10/Account-share-vs-revenue-share-for-new-client-top-tiers.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Querying a Snowflake Database</title><link href="https://marzaccaro.github.io/blog/2019/09/29/querying-a-snowflake-database/" rel="alternate" type="text/html" title="Querying a Snowflake Database" /><published>2019-09-29T13:31:29+01:00</published><updated>2019-09-29T13:31:29+01:00</updated><id>https://marzaccaro.github.io/blog/2019/09/29/querying-a-snowflake-database</id><content type="html" xml:base="https://marzaccaro.github.io/blog/2019/09/29/querying-a-snowflake-database/">&lt;p&gt;&lt;span class=&quot;rt-reading-time&quot; style=&quot;display: block;&quot;&gt;&lt;span class=&quot;rt-label rt-prefix&quot;&gt;Reading Time: &lt;/span&gt; &lt;span class=&quot;rt-time&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;rt-label rt-postfix&quot;&gt;minutes&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;My company is in the process of moving from an &lt;a href=&quot;https://aws.amazon.com/redshift/&quot; target=&quot;_blank&quot; rel=&quot;noreferrer noopener&quot; aria-label=&quot;Amazon Redshift (opens in a new tab)&quot;&gt;Amazon Redshift&lt;/a&gt; to a &lt;a rel=&quot;noreferrer noopener&quot; aria-label=&quot;Snowflake (opens in a new tab)&quot; href=&quot;https://www.snowflake.com/&quot; target=&quot;_blank&quot;&gt;Snowflake&lt;/a&gt; database, and without going into the consideration of pros and cons of each, let’s see how to query data from Snowflake.&lt;/p&gt;
+
+&lt;h3 id=&quot;using-the-web-ui&quot;&gt;Using the Web UI&lt;/h3&gt;
+
+&lt;p&gt;The first and easiest option is to use the web UI that comes for free once your Snowflake administrator have set you up with a username and password and given you the link to access it. You can find all the details on how to use it &lt;a rel=&quot;noreferrer noopener&quot; aria-label=&quot;here (opens in a new tab)&quot; href=&quot;https://docs.snowflake.net/manuals/user-guide/ui-using.html&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h4 id=&quot;worksheets&quot;&gt;Worksheets&lt;/h4&gt;
+
+&lt;div class=&quot;wp-block-image&quot;&gt;
+  &lt;figure class=&quot;aligncenter is-resized&quot;&gt;&lt;img src=&quot;https://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-13-08-17.png&quot; alt=&quot;&quot; class=&quot;wp-image-238&quot; width=&quot;152&quot; height=&quot;37&quot; /&gt;&lt;/figure&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Most notable feature of the Worksheets is that you can &lt;strong&gt;save, load and delete scripts&lt;/strong&gt; and keep them saved in your area – without worrying of saving before logging-out as all the scripts are automatically saved.&lt;/p&gt;
+
+&lt;p&gt;I wouldn’t recommend writing complex scripts in here, because you &lt;strong&gt;don’t have autocomplete&lt;/strong&gt;, and you can just place the SQL element (table, column, etc.) where your cursor is placed.&lt;/p&gt;
+
+&lt;p&gt;I would use the UI for database exploration: you can search tables by name, preview data, and see catalogs, tables and columns in your database or if do some basic row count or select all of certain tables.&lt;/p&gt;
+
+&lt;p&gt;Snowflake is well aware of the limitations of the UI and recently acquired &lt;a href=&quot;https://www.snowflake.com/blog/numeracy-investing-in-our-query-ui/&quot; target=&quot;_blank&quot; rel=&quot;noreferrer noopener&quot; aria-label=&quot; (opens in a new tab)&quot;&gt;Numeracy&lt;/a&gt;, to improve it.&lt;/p&gt;
+
+&lt;h4 id=&quot;history&quot;&gt;History&lt;/h4&gt;
+
+&lt;div class=&quot;wp-block-image&quot;&gt;
+  &lt;figure class=&quot;aligncenter&quot;&gt;&lt;img width=&quot;128&quot; height=&quot;42&quot; src=&quot;https://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-13-10-27.png&quot; alt=&quot;&quot; class=&quot;wp-image-239&quot; /&gt;&lt;/figure&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This is a really good feature of the web UI, as you can &lt;strong&gt;check the performance&lt;/strong&gt; for every user / warehouse and see what are the most expensive nodes in the execution plan of your query. This will allow you to optimise your query structure and write your query more efficiently.&lt;/p&gt;
+
+&lt;p&gt;Every analyst should keep an eye on the execution plan. This is also the place that tells you if in your specific query is better to use a temporary table or a CTE. Be aware of repeated executions as &lt;a href=&quot;https://www.youtube.com/watch?v=lcO8CRT5EMc&quot; target=&quot;_blank&quot; rel=&quot;noreferrer noopener&quot; aria-label=&quot;Snowflake caches result (opens in a new tab)&quot;&gt;Snowflake caches result&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;using-a-sql-client&quot;&gt;Using a SQL Client&lt;/h3&gt;
+
+&lt;p&gt;As Snowflake UI is not very friendly for auto-complete and field suggestion, as well as formatting, you can use a SQL client of your choice to connect to the database. My go to SQL client is &lt;a href=&quot;https://dbeaver.io/&quot; target=&quot;_blank&quot; rel=&quot;noreferrer noopener&quot; aria-label=&quot;DBeaver (opens in a new tab)&quot;&gt;DBeaver&lt;/a&gt;, as it is open source and it supports most SQL database.&lt;/p&gt;
+
+&lt;h4 id=&quot;setting-up-dbeaver-with-snowflake&quot;&gt;Setting up DBeaver with Snowflake&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Download the latest version, 4.3.4 or higher comes automatically with the Snowflake JDBC driver&lt;/li&gt;
+  &lt;li&gt;Click create a New Connection and select Snowflake&lt;/li&gt;
+  &lt;li&gt;You will need the &lt;strong&gt;Host&lt;/strong&gt;, &lt;strong&gt;User&lt;/strong&gt;, &lt;strong&gt;Password&lt;/strong&gt; and the &lt;strong&gt;Role&lt;/strong&gt; (ask your DB administrator for the details)&lt;/li&gt;
+  &lt;li&gt;You can specify Database or the Schema, but it’s optional&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;wp-block-image&quot;&gt;
+  &lt;figure class=&quot;aligncenter is-resized&quot;&gt;&lt;img src=&quot;https://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-12-14-23.png&quot; alt=&quot;&quot; class=&quot;wp-image-237&quot; width=&quot;483&quot; height=&quot;532&quot; srcset=&quot;http://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-12-14-23.png 781w, http://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-12-14-23-272x300.png 272w, http://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-12-14-23-768x847.png 768w&quot; sizes=&quot;(max-width: 483px) 100vw, 483px&quot; /&gt;&lt;figcaption&gt;Connection set-up screen&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Once you’re set up you can now navigate the database and write more complex queries with the autocomplete functionality.&lt;/p&gt;
+
+&lt;p&gt;Hope you find this useful and happy querying with Snowflake!&lt;/p&gt;</content><author><name>Martina Z</name></author><category term="Snowflake" /><summary type="html">Reading Time: 3 minutes</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://marzaccaro.github.io/blog/wp-content/uploads/2019/09/images.png" /><media:content medium="image" url="https://marzaccaro.github.io/blog/wp-content/uploads/2019/09/images.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">A 3D exploding pie chart: not a good idea.</title><link href="https://marzaccaro.github.io/blog/2019/06/01/a-3d-exploding-pie-chart-not-a-good-idea/" rel="alternate" type="text/html" title="A 3D exploding pie chart: not a good idea." /><published>2019-06-01T10:00:44+01:00</published><updated>2019-06-01T10:00:44+01:00</updated><id>https://marzaccaro.github.io/blog/2019/06/01/a-3d-exploding-pie-chart-not-a-good-idea</id><content type="html" xml:base="https://marzaccaro.github.io/blog/2019/06/01/a-3d-exploding-pie-chart-not-a-good-idea/">&lt;p&gt;&lt;span class=&quot;rt-reading-time&quot; style=&quot;display: block;&quot;&gt;&lt;span class=&quot;rt-label rt-prefix&quot;&gt;Reading Time: &lt;/span&gt; &lt;span class=&quot;rt-time&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;rt-label rt-postfix&quot;&gt;minutes&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;a-panel-in-a-history-of-printing-museum&quot;&gt;A panel in a history of printing museum&lt;/h4&gt;
+
+&lt;p&gt;Last week I was visiting this &lt;a rel=&quot;noreferrer noopener&quot; aria-label=&quot; (opens in a new tab)&quot; href=&quot;http://www.museibassano.it/collezione/museo-della-stampa-remondini&quot; target=&quot;_blank&quot;&gt;museum&lt;/a&gt; about the history of invention and development of printing in Bassano Del Grappa, a small little village in the North of Italy. The museum was really well presented and it reminded me how the introduction of printing marked a revolution: more and more books were available and the knowledge was faster to spread.&lt;/p&gt;
+
+&lt;p&gt;The museum focus was about the Remondini’s: a famous family running a publishing business, particularly active in the ‘700 and based in Bassano. Historians knew it was flourishing, because it was the main reproducer of a satiric depiction called the Juicio Universal, that was widespread and talked about in all the Catholic countries. To point out how wide was the reach of the prints, a panel in the museum proposed this chart&lt;/p&gt;
+
+&lt;div class=&quot;wp-block-image&quot;&gt;
+  &lt;figure class=&quot;aligncenter is-resized&quot;&gt;&lt;img src=&quot;http://foodfordata.com/wp-content/uploads/2019/05/IMG_20190505_170747856-e1559126539151-1024x612.jpg&quot; alt=&quot;&quot; class=&quot;wp-image-211&quot; width=&quot;406&quot; height=&quot;242&quot; srcset=&quot;http://foodfordata.com/wp-content/uploads/2019/05/IMG_20190505_170747856-e1559126539151-1024x612.jpg 1024w, http://foodfordata.com/wp-content/uploads/2019/05/IMG_20190505_170747856-e1559126539151-300x179.jpg 300w, http://foodfordata.com/wp-content/uploads/2019/05/IMG_20190505_170747856-e1559126539151-768x459.jpg 768w&quot; sizes=&quot;(max-width: 406px) 100vw, 406px&quot; /&gt;&lt;figcaption&gt;Panel at the Museo della Stampa Remondini, Bassano del Grappa&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And I decided to use this post as a commentary and an opportunity for a make over.&lt;/p&gt;
+
+&lt;h4 id=&quot;why-the-3d-pie-chart-does-not-fit-for-purpose&quot;&gt;Why the 3D pie chart does not fit for purpose?&lt;/h4&gt;
+
+&lt;p&gt;Looking at the panel I find myself going back and forth between the chart and the legend, struggling to understand what the aim of the chart is and I actually start looking at &lt;em&gt;Svizzera&lt;/em&gt; and then look back to the &lt;em&gt;Impero&lt;/em&gt; because the colours are so similar. Here some more reasons why this chart is not a good choice:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Too many colours make it hard to decide which is which clearly&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Spagna&lt;/em&gt; looks bigger than &lt;em&gt;Stato Pontificio&lt;/em&gt;, even though the latter is 1% bigger in reality: this is due to the deformation caused by the 3D effect&lt;/li&gt;
+  &lt;li&gt;At a glance I cannot understand what is going on and I need to read the whole legend.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;what-are-better-options&quot;&gt;What are better options?&lt;/h4&gt;
+
+&lt;p&gt;What alternative can I use to display the data? Of course the answer is &lt;strong&gt;it depends!&lt;/strong&gt; On what – I heard you asking? – on the message you’re trying to convey.&lt;/p&gt;
+
+&lt;p&gt;If it is important to &lt;strong&gt;compare&lt;/strong&gt; how many of the reproductions were going in each region, I would use a &lt;strong&gt;bar chart&lt;/strong&gt;, maybe highlighting the top region, like in the image below.&lt;/p&gt;
+
+&lt;div class=&quot;wp-block-image&quot;&gt;
+  &lt;figure class=&quot;aligncenter is-resized&quot;&gt;&lt;img src=&quot;http://foodfordata.com/wp-content/uploads/2019/05/Distribution-of-prints_-the-end-markets-for-the-Remondini-Juicio-Universal.png&quot; alt=&quot;&quot; class=&quot;wp-image-215&quot; width=&quot;570&quot; height=&quot;336&quot; srcset=&quot;http://foodfordata.com/wp-content/uploads/2019/05/Distribution-of-prints_-the-end-markets-for-the-Remondini-Juicio-Universal.png 629w, http://foodfordata.com/wp-content/uploads/2019/05/Distribution-of-prints_-the-end-markets-for-the-Remondini-Juicio-Universal-300x177.png 300w&quot; sizes=&quot;(max-width: 570px) 100vw, 570px&quot; /&gt;&lt;figcaption&gt;Bar chart, the difference between the regions is now clear&lt;br /&gt;and there is no need for a legend.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;/div&gt;
+
+&lt;p&gt;If instead is important to mark that &lt;strong&gt;so many different regions&lt;/strong&gt; were receiving these reproductions I would just list the number of different end markets and compare it to the number of existing regions at that time. Or alternatively give a &lt;strong&gt;sentence&lt;/strong&gt; like &lt;em&gt;X% of the number of books circulating in Europe where produced from Remondini&lt;/em&gt;, something along the line of this&lt;/p&gt;
+
+&lt;div class=&quot;wp-block-image&quot;&gt;
+  &lt;figure class=&quot;aligncenter is-resized&quot;&gt;&lt;img src=&quot;http://foodfordata.com/wp-content/uploads/2019/05/Screen-Shot-2019-05-30-at-10.12.12.png&quot; alt=&quot;&quot; class=&quot;wp-image-219&quot; width=&quot;498&quot; height=&quot;127&quot; srcset=&quot;http://foodfordata.com/wp-content/uploads/2019/05/Screen-Shot-2019-05-30-at-10.12.12.png 640w, http://foodfordata.com/wp-content/uploads/2019/05/Screen-Shot-2019-05-30-at-10.12.12-300x77.png 300w&quot; sizes=&quot;(max-width: 498px) 100vw, 498px&quot; /&gt;&lt;figcaption&gt;Sometimes a sentence with the main numbers is more effective. Note: these numbers are made up&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;/div&gt;
+
+&lt;p&gt;To summarise the nature of this data-set makes it hard to choose a pie chart, both because the number of colours is too high and because some of the slices’ sizes are so similar. The 3D effect does not help – distorting the proportion of the real numbers. Curious to see when is a good idea to use a pie chart? Have a look at &lt;a rel=&quot;noreferrer noopener&quot; aria-label=&quot;my presentation (opens in a new tab)&quot; href=&quot;https://foodfordata.com/2019/02/10/how-to-tell-a-story-with-data/&quot; target=&quot;_blank&quot;&gt;my presentation&lt;/a&gt; on how to better tell a story with data.&lt;/p&gt;</content><author><name>Martina Z</name></author><category term="Data visualisation" /><summary type="html">Reading Time: 3 minutes</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://marzaccaro.github.io/blog/wp-content/uploads/2019/05/IMG_20190505_170747856-e1559126539151.jpg" /><media:content medium="image" url="https://marzaccaro.github.io/blog/wp-content/uploads/2019/05/IMG_20190505_170747856-e1559126539151.jpg" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">JOIN 2019, London</title><link href="https://marzaccaro.github.io/blog/2019/04/15/join-2019-london/" rel="alternate" type="text/html" title="JOIN 2019, London" /><published>2019-04-15T23:37:32+01:00</published><updated>2019-04-15T23:37:32+01:00</updated><id>https://marzaccaro.github.io/blog/2019/04/15/join-2019-london</id><content type="html" xml:base="https://marzaccaro.github.io/blog/2019/04/15/join-2019-london/">&lt;p&gt;&lt;span class=&quot;rt-reading-time&quot; style=&quot;display: block;&quot;&gt;&lt;span class=&quot;rt-label rt-prefix&quot;&gt;Reading Time: &lt;/span&gt; &lt;span class=&quot;rt-time&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;rt-label rt-postfix&quot;&gt;minutes&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;what-is-join&quot;&gt;What is Join&lt;/h4&gt;
+
+&lt;p&gt;&lt;a rel=&quot;noreferrer noopener&quot; aria-label=&quot;Join - Tour (opens in a new tab)&quot; href=&quot;https://looker.com/events/join-the-tour#dates&quot; target=&quot;_blank&quot;&gt;Join – Tour&lt;/a&gt; is a conference for Looker users touring around the World and I took part in the London session on the 9th of April at The Brewery. &lt;a rel=&quot;noreferrer noopener&quot; aria-label=&quot;Looker (opens in a new tab)&quot; href=&quot;https://looker.com/&quot; target=&quot;_blank&quot;&gt;Looker&lt;/a&gt; is a self -service BI tool built for the cloud and, as many cloud services, they are building their own platform capability, building services and integrations to other analytics components, i.e. API integrations, actions, embedding etc.&lt;/p&gt;
+
+&lt;div class=&quot;wp-block-image&quot;&gt;
+  &lt;figure class=&quot;aligncenter is-resized&quot;&gt;&lt;img src=&quot;http://foodfordata.com/wp-content/uploads/2019/04/WhatsApp-Image-2019-04-15-at-23.10.53-575x1024.jpeg&quot; alt=&quot;&quot; class=&quot;wp-image-185&quot; width=&quot;301&quot; height=&quot;535&quot; /&gt;&lt;figcaption&gt;Join London at The Brewery&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;/div&gt;
+
+&lt;h4 id=&quot;the-structure-of-the-conference&quot;&gt;The structure of the conference&lt;/h4&gt;
+
+&lt;p&gt;The structure of the conference was opening and closing keynotes, and then some talks in between, split in:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Business Cases, where Looker customers presented their success stories and how they used the tool in their organisation driving adoption and achievement. These are quite an interesting way to promote the tools, showing the real world scenario rather than a shiny demo.&lt;/li&gt;
+  &lt;li&gt;Looker workshops, hands-on sessions to improve Looker knowledge thanks to the experts&lt;/li&gt;
+  &lt;li&gt;Sessions on specific product features, again from the Looker experts, but this time with presenting the capabilities&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;what-is-coming&quot;&gt;What is coming?&lt;/h4&gt;
+
+&lt;p&gt;I am most excited by the new visualisation capabilities, such as interactivity between Looks (Looker name for a query based report) and cross-filtering, but also the new dashboard filters design. Seems like the tool is moving towards more flexibility in term of visualisation.&lt;/p&gt;
+
+&lt;p&gt;I was very pleased to see a talk specifically on visualisation design and considerations about which visualisations to pick depending on the question you’re trying to answer.&lt;/p&gt;
+
+&lt;h4 id=&quot;where-the-analytics-world-is-moving&quot;&gt;Where the analytics world is moving?&lt;/h4&gt;
+
+&lt;p&gt;I noticed two trends in the data and analytics space, not specific to Looker but generic: the data analyst as data evangelist and BI product as a platform.&lt;/p&gt;
+
+&lt;blockquote class=&quot;wp-block-quote&quot;&gt;
+  &lt;p&gt;
+    Data are like roads. Where we use roads to navigate to a location, we use data to navigate to a decision.&lt;br /&gt;The road analogy highlights the importance of joining up data. A single road only takes us to places between two locations; their real value comes from being part of a network. &lt;strong&gt;Data works in the same way: it is not just having more data that unlocks its value, but linking it together. &lt;/strong&gt;Data is not individual datasets, it is a network
+  &lt;/p&gt;
+  
+  &lt;cite&gt;Jeni Tennison, &lt;a href=&quot;https://www.statisticsauthority.gov.uk/odi-data-blog/&quot; target=&quot;_blank&quot; rel=&quot;noreferrer noopener&quot; aria-label=&quot;Joining Up Data (opens in a new tab)&quot;&gt;Joining Up Data&lt;/a&gt;&lt;/cite&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;More data and more systems mean more connections and the only way to interact with the plethora of SaaS applications that all digital companies use is to build connections between each of them to the others, so the users can flawless navigate and share information between these and enrich the vision of decision makers, avoiding silos where decision are made without the considering the bigger picture.&lt;/p&gt;
+
+&lt;blockquote class=&quot;wp-block-quote&quot;&gt;
+  &lt;p&gt;
+    &lt;strong&gt;Data analysis&lt;/strong&gt; isn’t just about assembling, ordering and interpreting data; &lt;strong&gt;it’s also about educating, simplifying, clarifying, and persuading&lt;/strong&gt;.
+  &lt;/p&gt;
+  
+  &lt;cite&gt;Eva Murray, &lt;a href=&quot;https://www.forbes.com/sites/evamurray/2019/02/11/data-visualization-and-the-power-of-persuasion/#30e9e96f4612&quot; target=&quot;_blank&quot; rel=&quot;noreferrer noopener&quot; aria-label=&quot;Data Visualization And The Power Of Persuasion (opens in a new tab)&quot;&gt;Data Visualization And The Power Of Persuasion&lt;/a&gt;&lt;/cite&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The data analysts are no longer the heroes, providing reports and insights to the whole business, but they are driving business change and supporting more and more people to find the answer to their own questions. With the amount of data ever more increasing, is impossible to capture every data needs, so data analysts need to put in place an infrastructure that has a wide coverage and then empower more and more people to make &lt;g class=&quot;gr_ gr\_5 gr-alert gr\_gramm gr\_inline\_cards gr\_run\_anim Grammar only-ins doubleReplace replaceWithoutSep&quot; id=&quot;5&quot; data-gr-id=&quot;5&quot;&gt;data-driven&lt;/g&gt; decisions with self-service BI tools.&lt;/p&gt;</content><author><name>Martina Z</name></author><category term="Events" /><summary type="html">Reading Time: 2 minutes</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://marzaccaro.github.io/blog/wp-content/uploads/2019/04/WhatsApp-Image-2019-04-15-at-23.10.53-e1555366300639.jpeg" /><media:content medium="image" url="https://marzaccaro.github.io/blog/wp-content/uploads/2019/04/WhatsApp-Image-2019-04-15-at-23.10.53-e1555366300639.jpeg" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Edward Tufte and the principle of Graphical Integrity</title><link href="https://marzaccaro.github.io/blog/2019/02/23/edward-tufte-and-the-graphical-integrity/" rel="alternate" type="text/html" title="Edward Tufte and the principle of Graphical Integrity" /><published>2019-02-23T15:07:56+00:00</published><updated>2019-02-23T15:07:56+00:00</updated><id>https://marzaccaro.github.io/blog/2019/02/23/edward-tufte-and-the-graphical-integrity</id><content type="html" xml:base="https://marzaccaro.github.io/blog/2019/02/23/edward-tufte-and-the-graphical-integrity/">&lt;p&gt;&lt;span class=&quot;rt-reading-time&quot; style=&quot;display: block;&quot;&gt;&lt;span class=&quot;rt-label rt-prefix&quot;&gt;Reading Time: &lt;/span&gt; &lt;span class=&quot;rt-time&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;rt-label rt-postfix&quot;&gt;minutes&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;my-favourite-meet-up-in-london&quot;&gt;&lt;strong&gt;My favourite meet up in London&lt;/strong&gt;&lt;/h4&gt;
+
+&lt;p&gt;Often you &lt;strong&gt;learn more talking with people&lt;/strong&gt; and sharing your experience than studying on your own. In London, there are plenty of opportunities for networking and knowledge sharing and my favourite place is definitely &lt;a href=&quot;http://tinytableautalks.com/&quot;&gt;Tiny Tableau Talks&lt;/a&gt;, a selection of 5 minutes talks about data visualisation and storytelling. I love it so much because:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;In 5 minutes you have to keep it short and often you go straight to the core concept&lt;/li&gt;
+  &lt;li&gt;Most of the talks are useful tips&lt;/li&gt;
+  &lt;li&gt;It is open to anyone, not just the experts, as long as you have something interesting to share&lt;/li&gt;
+  &lt;li&gt;Even if most of the talks are about Tableau, the lessons you learn are often generic and applicable to any data visualisation tool you’re using&lt;/li&gt;
+  &lt;li&gt;The organisers are great and help you to get ready to give a talk.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;my-experience&quot;&gt;&lt;strong&gt;My experience&lt;/strong&gt;&lt;/h4&gt;
+
+&lt;p&gt;I’ve been to some of these meet-ups and learned so much, that I felt I have to give back to the community and do my own tiny talk. I am particularly fascinated by history in general because I like to know how and why things are the way they are, when did they change, when people started to formalise some concepts and why? &lt;strong&gt;Data visualisation&lt;/strong&gt; is not different, and despite being a recent field it &lt;strong&gt;has an awesome history&lt;/strong&gt; to discover.&lt;/p&gt;
+
+&lt;h4 id=&quot;choosing-the-subject&quot;&gt;&lt;strong&gt;Choosing the subject&lt;/strong&gt;&lt;/h4&gt;
+
+&lt;div class=&quot;wp-block-image&quot;&gt;
+  &lt;figure class=&quot;alignleft is-resized&quot;&gt;&lt;img src=&quot;http://foodfordata.com/wp-content/uploads/2019/02/IMG_20190223_144103064-e1550933112453-768x1024.jpg&quot; alt=&quot;&quot; class=&quot;wp-image-152&quot; width=&quot;219&quot; height=&quot;292&quot; /&gt;&lt;figcaption&gt;The Visual Display of Quantitative Information by E. Tufte&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;/div&gt;
+
+&lt;p&gt;One of the pioneers in data visualisation and graphical representation of information is Edward Tufte, and I loved his masterpiece &lt;em&gt;&lt;a rel=&quot;noreferrer noopener&quot; aria-label=&quot;The display of quantitative information (opens in a new tab)&quot; href=&quot;https://www.edwardtufte.com/tufte/books_vdqi&quot; target=&quot;_blank&quot;&gt;The display of quantitative information&lt;/a&gt;&lt;/em&gt;, which is included by Amazon in the top 100 books of the 20th century.&lt;/p&gt;
+
+&lt;p&gt;He formalised a &lt;g class=&quot;gr_ gr\_62 gr-alert gr\_gramm gr\_inline\_cards gr\_run\_anim Grammar only-ins replaceWithoutSep&quot; id=&quot;62&quot; data-gr-id=&quot;62&quot;&gt;lot&lt;/g&gt; of principles of Data Visualisation before digital tools were so popular and &lt;g class=&quot;gr_ gr\_17 gr-alert gr\_spell gr\_inline\_cards gr\_run\_anim ContextualSpelling&quot; id=&quot;17&quot; data-gr-id=&quot;17&quot;&gt;mostly&lt;/g&gt; journalists were using charts to make news more informative.&lt;/p&gt;
+
+&lt;p&gt;I then asked myself: &lt;strong&gt;which of Tufte’s lessons – born in paper design – are still applicable in digital design?&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;the-principle-of-graphical-integrity&quot;&gt;&lt;strong&gt;The principle of graphical integrity&lt;/strong&gt;&lt;/h4&gt;
+
+&lt;p&gt;The first principle illustrated by Tufte is the principle of graphical integrity, which is pushing for truthfulness in data representation. The core &lt;g class=&quot;gr_ gr\_63 gr-alert gr\_spell gr\_inline\_cards gr\_run\_anim ContextualSpelling ins-del multiReplace&quot; id=&quot;63&quot; data-gr-id=&quot;63&quot;&gt;eleme&lt;/g&gt;nts are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Graphic should respect the proportions of the numbers they represent&lt;/li&gt;
+  &lt;li&gt;Use labelling to help understanding&lt;/li&gt;
+  &lt;li&gt;Show data variation, not design variation&lt;/li&gt;
+  &lt;li&gt;When displaying monetary variation over time, is better to standardise the units (e.g. consider inflation)&lt;/li&gt;
+  &lt;li&gt;Don’t use more dimensions than the ones included in the chart (avoid 3D)&lt;/li&gt;
+  &lt;li&gt;Don’t quote data out of context&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;the-content-of-my-presentation&quot;&gt;&lt;strong&gt;The content of my presentation&lt;/strong&gt;&lt;/h4&gt;
+
+&lt;p&gt;I couldn’t include all these in 5 minutes, so I cut down to three points and included a practical example for each of them. You can find the final result in the video below.&lt;figure class=&quot;wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;div class=&quot;wp-block-embed__wrapper&quot;&gt;
+  &lt;div class=&quot;video-container&quot;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;figcaption&gt;My Tiny Tableau Talk&lt;/figcaption&gt;
+&lt;p&gt;&amp;lt;/figure&amp;gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;my-thoughts-on-tuftes-book&quot;&gt;&lt;strong&gt;My thoughts on Tufte’s book&lt;/strong&gt;&lt;/h4&gt;
+
+&lt;p&gt;In my opinion, the book is addressing mainly journalists and designer, that’s why there is such a prescriptive approach. Nonetheless – especially now that we are bombarded with reading opportunities – journalists and designers need to capture the eyes of the reader, with both truthful and visually appealing representations.&lt;/p&gt;
+
+&lt;h4 id=&quot;more-learning-along-the-way&quot;&gt;&lt;strong&gt;More learning along the way&lt;/strong&gt;&lt;/h4&gt;
+
+&lt;p&gt;Googling around &lt;em&gt;Data Visualisation History&lt;/em&gt; you can find this amazing project to outline a &lt;a rel=&quot;noreferrer noopener&quot; aria-label=&quot;timeline with milestones (opens in a new tab)&quot; href=&quot;http://www.datavis.ca/milestones/&quot; target=&quot;_blank&quot;&gt;timeline with milestones&lt;/a&gt; of the history of data visualization, by Michael Friendly along with his books, papers and presentations. Here are some curiosities: the bar, line and pie chart were all introduced by William Playfair in the 18th century, whereas Tufte is the inventor of the sparkline, that was first used in 2004.&lt;/p&gt;</content><author><name>Martina Z</name></author><category term="Data visualisation" /><summary type="html">Reading Time: 3 minutes</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://marzaccaro.github.io/blog/wp-content/uploads/2019/02/IMG_20190223_144103064-e1550933367574.jpg" /><media:content medium="image" url="https://marzaccaro.github.io/blog/wp-content/uploads/2019/02/IMG_20190223_144103064-e1550933367574.jpg" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
