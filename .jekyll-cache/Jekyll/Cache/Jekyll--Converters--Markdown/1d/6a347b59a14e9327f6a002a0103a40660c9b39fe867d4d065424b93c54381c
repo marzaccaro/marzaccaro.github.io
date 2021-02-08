@@ -1,0 +1,117 @@
+I"<p><span class="rt-reading-time" style="display: block;"><span class="rt-label rt-prefix">Reading Time: </span> <span class="rt-time">2</span> <span class="rt-label rt-postfix">minutes</span></span></p>
+
+<p>I’ll be starting a series of posts about some cool <a rel="noreferrer noopener" href="https://www.snowflake.com/" target="_blank">Snowflake</a> (The cloud data platform) features, that makes SnowSQL really cool – compared to other SQL dialect (I am most familiar with Microsoft SQL Server or T-SQL).</p>
+
+<p>I’ll start the series, talking about <strong>aliasing</strong>.</p>
+
+<p>Sometimes our SQL get really complex: who haven’t seen a nested case statement grows exponentially? so much that after a while you can’t understand anymore if the output is what is supposed to be, and same for window functions.</p>
+
+<p>The suggestion when complexity arise is usually “break down the problem in smaller steps”, and that’s where aliasing can help the most writing your SQL queries.</p>
+
+<p>Snowflake features of aliasing allows you to re-use the same SQL block in another column definition and simplify massively your code, making it more understandable.</p>
+
+<p>For example you might have a SQL like this:</p>
+
+<pre class="EnlighterJSRAW" data-enlighter-language="sql" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="" data-enlighter-lineoffset="" data-enlighter-title="" data-enlighter-group="">select 
+  case 
+    when price &gt; 100 and referral_code  = 'XXX1' then price * 0.9
+    when referral_code = 'XX2' then price*0.75
+    when referral_code = 'XX3' then price - 10 
+    else price end as discounted_price,
+  case 
+    when partner = 'A' then discounted_price*0.2
+    when partner = 'B' then discounted_price*0.3
+    else discounted_price end as partner_fee
+from my_table</pre>
+
+<p>So this is the new alternative, without the aliasing capability (for example in a database like SQL Server, you would have to explicitly re-write the logic for the <code class="language-plaintext highlighter-rouge">discounted_price</code> twice (not DRY, <a rel="noreferrer noopener" href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself" target="_blank">Don’t Repeat Yourself</a>) or create a function in the database (<a rel="noreferrer noopener" href="https://docs.microsoft.com/en-us/sql/t-sql/statements/create-function-transact-sql?view=sql-server-ver15" target="_blank">like this</a>). So much neater using the alias!</p>
+
+<p>Moreover you can use those aliases in the <code class="language-plaintext highlighter-rouge">where</code>, <code class="language-plaintext highlighter-rouge">group by</code>, <code class="language-plaintext highlighter-rouge">having</code>, <code class="language-plaintext highlighter-rouge">qualify</code> and <code class="language-plaintext highlighter-rouge">order by</code> statement, saving you from copying the same logic multiple times in your query.</p>
+
+<p>Here is another example:</p>
+
+<pre class="EnlighterJSRAW" data-enlighter-language="sql" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="" data-enlighter-lineoffset="" data-enlighter-title="" data-enlighter-group="">select 
+  first_name,
+  last_name,
+  first_name || ' ' || last_name as full_name
+from names
+where full_name = 'My Full Name'</pre>
+
+<p>In general this feature is amazing, but there are a couple cases where it might trick you. In particular: alias don’t override existing columns names and can have unexpected behaviour when used in join clauses.</p>
+
+<h5 id="alias-conflicting-with-existing-columns-names">Alias conflicting with existing columns names</h5>
+
+<p>Snowflake doesn’t infer the alias if you create an alias that is already a columns in one of the tables you join. Suppose the tables look like these:</p>
+
+<p>first table t1:<figure class="wp-block-table is-style-regular"></figure></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>email_address</th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>12</td>
+      <td>foo@com</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>hola@com</td>
+      <td>&lt;/figure&gt;</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>second table t2:<figure class="wp-block-table"></figure></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>my_id</th>
+      <th>email_address</th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>12</td>
+      <td>food@com</td>
+      <td>&lt;/figure&gt;</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The following query</p>
+
+<pre class="EnlighterJSRAW" data-enlighter-language="sql" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="" data-enlighter-lineoffset="" data-enlighter-title="" data-enlighter-group="">select 
+  t1.id
+  , coalesce( t2.email_address, t1.email_address) as email_address
+from t1
+left join t2
+  on t1.id = t2.my_id
+where email_address = 'foo@com'</pre>
+
+<p>will give you an error of ambiguous column name, so you’ll need to specify the table for the column you want to use or rename the column alias to be something different from the column names already existing in your tables.</p>
+
+<h5 id="alias-used-in-joins">Alias used in joins.</h5>
+
+<p>Snowflake doesn’t like aliases in joins, suppose we have two tables above, and say you want to rename the <code class="language-plaintext highlighter-rouge">my_id</code> of the second table to <code class="language-plaintext highlighter-rouge">new_id</code> :</p>
+
+<pre class="EnlighterJSRAW" data-enlighter-language="sql" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="" data-enlighter-lineoffset="" data-enlighter-title="" data-enlighter-group="">select 
+  t1.id
+  ,t2.my_id as new_id
+from t1
+left join t2 
+  on t1.id = t2.new_id</pre>
+
+<p>Will give you an error of unknown column names, so careful when using aliases in the join.</p>
+
+<p>To summarise, aliases are amazing to simplify your code and stay DRY but needs to be used with care when joining tables.</p>
+
+<p>Hope you too loves aliases, or start using them after reading this post! Did you find any other troubles using them? Let me know.</p>
+:ET

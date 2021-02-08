@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Querying a Snowflake Database | Food For Data</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Querying a Snowflake Database" />
+<meta name="author" content="Martina Z" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Reading Time: 3 minutes" />
+<meta property="og:description" content="Reading Time: 3 minutes" />
+<link rel="canonical" href="/blog/2019/09/29/querying-a-snowflake-database/" />
+<meta property="og:url" content="/blog/2019/09/29/querying-a-snowflake-database/" />
+<meta property="og:site_name" content="Food For Data" />
+<meta property="og:image" content="/blog/wp-content/uploads/2019/09/images.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-09-29T13:31:29+01:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="/blog/wp-content/uploads/2019/09/images.png" />
+<meta property="twitter:title" content="Querying a Snowflake Database" />
+<script type="application/ld+json">
+{"description":"Reading Time: 3 minutes","mainEntityOfPage":{"@type":"WebPage","@id":"/blog/2019/09/29/querying-a-snowflake-database/"},"@type":"BlogPosting","url":"/blog/2019/09/29/querying-a-snowflake-database/","image":"/blog/wp-content/uploads/2019/09/images.png","author":{"@type":"Person","name":"Martina Z"},"headline":"Querying a Snowflake Database","dateModified":"2019-09-29T13:31:29+01:00","datePublished":"2019-09-29T13:31:29+01:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/main.css"><link type="application/atom+xml" rel="alternate" href="/blog/feed.xml" title="Food For Data" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Food For Data</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about.html">About</a><a class="page-link" href="/blog/privacy-policy.html">Privacy Policy</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Querying a Snowflake Database</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2019-09-29T13:31:29+01:00" itemprop="datePublished">Sep 29, 2019
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Martina Z</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><span class="rt-reading-time" style="display: block;"><span class="rt-label rt-prefix">Reading Time: </span> <span class="rt-time">3</span> <span class="rt-label rt-postfix">minutes</span></span></p>
+
+<p>My company is in the process of moving from an <a href="https://aws.amazon.com/redshift/" target="_blank" rel="noreferrer noopener" aria-label="Amazon Redshift (opens in a new tab)">Amazon Redshift</a> to a <a rel="noreferrer noopener" aria-label="Snowflake (opens in a new tab)" href="https://www.snowflake.com/" target="_blank">Snowflake</a> database, and without going into the consideration of pros and cons of each, let’s see how to query data from Snowflake.</p>
+
+<h3 id="using-the-web-ui">Using the Web UI</h3>
+
+<p>The first and easiest option is to use the web UI that comes for free once your Snowflake administrator have set you up with a username and password and given you the link to access it. You can find all the details on how to use it <a rel="noreferrer noopener" aria-label="here (opens in a new tab)" href="https://docs.snowflake.net/manuals/user-guide/ui-using.html" target="_blank">here</a>.</p>
+
+<h4 id="worksheets">Worksheets</h4>
+
+<div class="wp-block-image">
+  <figure class="aligncenter is-resized"><img src="https://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-13-08-17.png" alt="" class="wp-image-238" width="152" height="37" /></figure>
+</div>
+
+<p>Most notable feature of the Worksheets is that you can <strong>save, load and delete scripts</strong> and keep them saved in your area – without worrying of saving before logging-out as all the scripts are automatically saved.</p>
+
+<p>I wouldn’t recommend writing complex scripts in here, because you <strong>don’t have autocomplete</strong>, and you can just place the SQL element (table, column, etc.) where your cursor is placed.</p>
+
+<p>I would use the UI for database exploration: you can search tables by name, preview data, and see catalogs, tables and columns in your database or if do some basic row count or select all of certain tables.</p>
+
+<p>Snowflake is well aware of the limitations of the UI and recently acquired <a href="https://www.snowflake.com/blog/numeracy-investing-in-our-query-ui/" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)">Numeracy</a>, to improve it.</p>
+
+<h4 id="history">History</h4>
+
+<div class="wp-block-image">
+  <figure class="aligncenter"><img width="128" height="42" src="https://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-13-10-27.png" alt="" class="wp-image-239" /></figure>
+</div>
+
+<p>This is a really good feature of the web UI, as you can <strong>check the performance</strong> for every user / warehouse and see what are the most expensive nodes in the execution plan of your query. This will allow you to optimise your query structure and write your query more efficiently.</p>
+
+<p>Every analyst should keep an eye on the execution plan. This is also the place that tells you if in your specific query is better to use a temporary table or a CTE. Be aware of repeated executions as <a href="https://www.youtube.com/watch?v=lcO8CRT5EMc" target="_blank" rel="noreferrer noopener" aria-label="Snowflake caches result (opens in a new tab)">Snowflake caches result</a>.</p>
+
+<h3 id="using-a-sql-client">Using a SQL Client</h3>
+
+<p>As Snowflake UI is not very friendly for auto-complete and field suggestion, as well as formatting, you can use a SQL client of your choice to connect to the database. My go to SQL client is <a href="https://dbeaver.io/" target="_blank" rel="noreferrer noopener" aria-label="DBeaver (opens in a new tab)">DBeaver</a>, as it is open source and it supports most SQL database.</p>
+
+<h4 id="setting-up-dbeaver-with-snowflake">Setting up DBeaver with Snowflake</h4>
+
+<ul>
+  <li>Download the latest version, 4.3.4 or higher comes automatically with the Snowflake JDBC driver</li>
+  <li>Click create a New Connection and select Snowflake</li>
+  <li>You will need the <strong>Host</strong>, <strong>User</strong>, <strong>Password</strong> and the <strong>Role</strong> (ask your DB administrator for the details)</li>
+  <li>You can specify Database or the Schema, but it’s optional</li>
+</ul>
+
+<div class="wp-block-image">
+  <figure class="aligncenter is-resized"><img src="https://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-12-14-23.png" alt="" class="wp-image-237" width="483" height="532" srcset="http://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-12-14-23.png 781w, http://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-12-14-23-272x300.png 272w, http://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-12-14-23-768x847.png 768w" sizes="(max-width: 483px) 100vw, 483px" /><figcaption>Connection set-up screen</figcaption></figure>
+</div>
+
+<p>Once you’re set up you can now navigate the database and write more complex queries with the autocomplete functionality.</p>
+
+<p>Hope you find this useful and happy querying with Snowflake!</p>
+
+  </div><a class="u-url" href="/blog/2019/09/29/querying-a-snowflake-database/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Food For Data</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Food For Data</li><li><a class="u-email" href="mailto:your-email@example.com">your-email@example.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/marzaccaro"><svg class="svg-icon"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg> <span class="username">marzaccaro</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Feeding my data thoughts</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

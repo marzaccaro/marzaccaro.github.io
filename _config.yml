@@ -18,17 +18,26 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: My first static website
+title: Food For Data
+email: your-email@example.com
 description: >- # this means to ignore newlines until "baseurl:"
-  Some data consideration
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "localhost:4000" # the base hostname & protocol for your site, e.g. http://example.com
+  Feeding my data thoughts
+baseurl: "/blog" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  marzaccaro
 
 # Build settings
 theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-paginate
+
+show_excerpts: true
+
+paginate: 5
+paginate_path: "blog/page/:num/"
+
+
 
 # Exclude from processing.
 # The following items will not be processed, by default.
