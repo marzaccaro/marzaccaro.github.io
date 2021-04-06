@@ -1,0 +1,117 @@
+I"�!<p>I’ll be starting a series of posts about some cool <a rel="noreferrer noopener" href="https://www.snowflake.com/" target="_blank">Snowflake</a> (The cloud data platform) features, that makes SnowSQL really cool – compared to other SQL dialect (I am most familiar with Microsoft SQL Server or T-SQL).</p>
+
+<p>I’ll start the series, talking about <strong>aliasing</strong>.</p>
+
+<p>Sometimes our SQL get really complex: who haven’t seen a nested case statement grows exponentially? so much that after a while you can’t understand anymore if the output is what is supposed to be, and same for window functions.</p>
+
+<p>The suggestion when complexity arise is usually “break down the problem in smaller steps”, and that’s where aliasing can help the most writing your SQL queries.</p>
+
+<p>Snowflake features of aliasing allows you to re-use the same SQL block in another column definition and simplify massively your code, making it more understandable.</p>
+
+<p>For example you might have a SQL like this:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span> 
+  <span class="k">case</span> 
+    <span class="k">when</span> <span class="n">price</span> <span class="o">&gt;</span> <span class="mi">100</span> 
+      <span class="k">and</span> <span class="n">referral_code</span>  <span class="o">=</span> <span class="s1">'XXX1'</span> <span class="k">then</span> <span class="n">price</span> <span class="o">*</span> <span class="mi">0</span><span class="p">.</span><span class="mi">9</span>
+    <span class="k">when</span> <span class="n">referral_code</span> <span class="o">=</span> <span class="s1">'XX2'</span> <span class="k">then</span> <span class="n">price</span><span class="o">*</span><span class="mi">0</span><span class="p">.</span><span class="mi">75</span>
+    <span class="k">when</span> <span class="n">referral_code</span> <span class="o">=</span> <span class="s1">'XX3'</span> <span class="k">then</span> <span class="n">price</span> <span class="o">-</span> <span class="mi">10</span> 
+    <span class="k">else</span> <span class="n">price</span> <span class="k">end</span> <span class="k">as</span> <span class="n">discounted_price</span><span class="p">,</span>
+  <span class="k">case</span> 
+    <span class="k">when</span> <span class="n">partner</span> <span class="o">=</span> <span class="s1">'A'</span> <span class="k">then</span> <span class="n">discounted_price</span><span class="o">*</span><span class="mi">0</span><span class="p">.</span><span class="mi">2</span>
+    <span class="k">when</span> <span class="n">partner</span> <span class="o">=</span> <span class="s1">'B'</span> <span class="k">then</span> <span class="n">discounted_price</span><span class="o">*</span><span class="mi">0</span><span class="p">.</span><span class="mi">3</span>
+    <span class="k">else</span> <span class="n">discounted_price</span> <span class="k">end</span> <span class="k">as</span> <span class="n">partner_fee</span>
+<span class="k">from</span> <span class="n">my_table</span>
+</code></pre></div></div>
+
+<p>So this is the new alternative, without the aliasing capability (for example in a database like SQL Server, you would have to explicitly re-write the logic for the <code class="language-plaintext highlighter-rouge">discounted_price</code> twice (not DRY, <a rel="noreferrer noopener" href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself" target="_blank">Don’t Repeat Yourself</a>) or create a function in the database (<a rel="noreferrer noopener" href="https://docs.microsoft.com/en-us/sql/t-sql/statements/create-function-transact-sql?view=sql-server-ver15" target="_blank">like this</a>). So much neater using the alias!</p>
+
+<p>Moreover you can use those aliases in the <code class="language-plaintext highlighter-rouge">where</code>, <code class="language-plaintext highlighter-rouge">group by</code>, <code class="language-plaintext highlighter-rouge">having</code>, <code class="language-plaintext highlighter-rouge">qualify</code> and <code class="language-plaintext highlighter-rouge">order by</code> statement, saving you from copying the same logic multiple times in your query.</p>
+
+<p>Here is another example:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span> 
+  <span class="n">first_name</span><span class="p">,</span>
+  <span class="n">last_name</span><span class="p">,</span>
+  <span class="n">first_name</span> <span class="o">||</span> <span class="s1">' '</span> <span class="o">||</span> <span class="n">last_name</span> <span class="k">as</span> <span class="n">full_name</span>
+<span class="k">from</span> <span class="k">names</span>
+<span class="k">where</span> <span class="n">full_name</span> <span class="o">=</span> <span class="s1">'My Full Name'</span>
+</code></pre></div></div>
+
+<p>In general this feature is amazing, but there are a couple cases where it might trick you. In particular: alias don’t override existing columns names and can have unexpected behaviour when used in join clauses.</p>
+
+<h5 id="alias-conflicting-with-existing-columns-names">Alias conflicting with existing columns names</h5>
+
+<p>Snowflake doesn’t infer the alias if you create an alias that is already a columns in one of the tables you join. Suppose the tables look like these:</p>
+
+<p>first table t1</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>email_address</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>12</td>
+      <td>foo@com</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>hola@com</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br />
+second table t2:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>my_id</th>
+      <th>email_address</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>12</td>
+      <td>food@com</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br />
+The following query</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span> 
+  <span class="n">t1</span><span class="p">.</span><span class="n">id</span>
+  <span class="p">,</span> <span class="n">coalesce</span><span class="p">(</span> <span class="n">t2</span><span class="p">.</span><span class="n">email_address</span><span class="p">,</span> <span class="n">t1</span><span class="p">.</span><span class="n">email_address</span><span class="p">)</span> <span class="k">as</span> <span class="n">email_address</span>
+<span class="k">from</span> <span class="n">t1</span>
+<span class="k">left</span> <span class="k">join</span> <span class="n">t2</span>
+  <span class="k">on</span> <span class="n">t1</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">t2</span><span class="p">.</span><span class="n">my_id</span>
+<span class="k">where</span> <span class="n">email_address</span> <span class="o">=</span> <span class="s1">'foo@com'</span>
+</code></pre></div></div>
+
+<p>will give you an error of ambiguous column name, so you’ll need to specify the table for the column you want to use or rename the column alias to be something different from the column names already existing in your tables.</p>
+
+<h5 id="alias-used-in-joins">Alias used in joins.</h5>
+
+<p>Snowflake doesn’t like aliases in joins, suppose we have two tables above, and say you want to rename the <code class="language-plaintext highlighter-rouge">my_id</code> of the second table to <code class="language-plaintext highlighter-rouge">new_id</code> :</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span> 
+  <span class="n">t1</span><span class="p">.</span><span class="n">id</span>
+  <span class="p">,</span><span class="n">t2</span><span class="p">.</span><span class="n">my_id</span> <span class="k">as</span> <span class="n">new_id</span>
+<span class="k">from</span> <span class="n">t1</span>
+<span class="k">left</span> <span class="k">join</span> <span class="n">t2</span> 
+  <span class="k">on</span> <span class="n">t1</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">t2</span><span class="p">.</span><span class="n">new_id</span>
+</code></pre></div></div>
+
+<p>Will give you an error of unknown column names, so careful when using aliases in the join.</p>
+
+<p>To summarise, aliases are amazing to simplify your code and stay DRY but needs to be used with care when joining tables.</p>
+
+<p>Hope you too loves aliases, or start using them after reading this post! Did you find any other troubles using them? Let me know.</p>
+:ET

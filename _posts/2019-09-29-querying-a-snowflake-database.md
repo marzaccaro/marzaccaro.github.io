@@ -10,7 +10,6 @@ image: /wp-content/uploads/2019/09/images.png
 categories:
   - Snowflake
 ---
-<span class="rt-reading-time" style="display: block;"><span class="rt-label rt-prefix">Reading Time: </span> <span class="rt-time">3</span> <span class="rt-label rt-postfix">minutes</span></span> 
 
 My company is in the process of moving from an <a href="https://aws.amazon.com/redshift/" target="_blank" rel="noreferrer noopener" aria-label="Amazon Redshift (opens in a new tab)">Amazon Redshift</a> to a <a rel="noreferrer noopener" aria-label="Snowflake (opens in a new tab)" href="https://www.snowflake.com/" target="_blank">Snowflake</a> database, and without going into the consideration of pros and cons of each, let&#8217;s see how to query data from Snowflake. 
 
@@ -20,9 +19,7 @@ The first and easiest option is to use the web UI that comes for free once your 
 
 #### Worksheets
 
-<div class="wp-block-image">
-  <figure class="aligncenter is-resized"><img src="https://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-13-08-17.png" alt="" class="wp-image-238" width="152" height="37" /></figure>
-</div>
+{% include figure.html image="/assets/uploads/worksheet-snowflake.png" width=152 height=37 %}
 
 Most notable feature of the Worksheets is that you can **save, load and delete scripts** and keep them saved in your area &#8211; without worrying of saving before logging-out as all the scripts are automatically saved. 
 
@@ -34,9 +31,7 @@ Snowflake is well aware of the limitations of the UI and recently acquired <a hr
 
 #### History
 
-<div class="wp-block-image">
-  <figure class="aligncenter"><img width="128" height="42" src="https://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-13-10-27.png" alt="" class="wp-image-239" /></figure>
-</div>
+{% include figure.html image="/assets/uploads/history-snowflake.png" width=128 height=42 %}
 
 This is a really good feature of the web UI, as you can **check the performance** for every user / warehouse and see what are the most expensive nodes in the execution plan of your query. This will allow you to optimise your query structure and write your query more efficiently.
 
@@ -53,9 +48,8 @@ As Snowflake UI is not very friendly for auto-complete and field suggestion, as 
   * You will need the **Host**, **User**, **Password** and the **Role** (ask your DB administrator for the details)
   * You can specify Database or the Schema, but it&#8217;s optional
 
-<div class="wp-block-image">
-  <figure class="aligncenter is-resized"><img src="https://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-12-14-23.png" alt="" class="wp-image-237" width="483" height="532" srcset="http://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-12-14-23.png 781w, http://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-12-14-23-272x300.png 272w, http://foodfordata.com/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-12-14-23-768x847.png 768w" sizes="(max-width: 483px) 100vw, 483px" /><figcaption>Connection set-up screen</figcaption></figure>
-</div>
+
+{% include figure.html image="/assets/uploads/connection-snowflake.png" caption="Connection set-up screen" width=483 height=532 %}
 
 Once you&#8217;re set up you can now navigate the database and write more complex queries with the autocomplete functionality.
 

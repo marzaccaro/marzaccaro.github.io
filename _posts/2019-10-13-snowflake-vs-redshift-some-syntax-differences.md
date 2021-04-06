@@ -9,7 +9,6 @@ permalink: /2019/10/13/snowflake-vs-redshift-some-syntax-differences/
 categories:
   - Snowflake
 ---
-<span class="rt-reading-time" style="display: block;"><span class="rt-label rt-prefix">Reading Time: </span> <span class="rt-time">3</span> <span class="rt-label rt-postfix">minutes</span></span> 
 
 #### Moving code from Redshift to Snowflake
 
@@ -44,22 +43,28 @@ The function `CONVERT` does not exist any longer, but `CAST` is a safe alternati
 
 With Redshift a syntax like: 
 
-<pre class="EnlighterJSRAW" data-enlighter-language="sql" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="" data-enlighter-lineoffset="" data-enlighter-title="" data-enlighter-group="">CASE WHEN a is true THEN 'Yes' ELSE 'No' END </pre>
+```sql
+CASE WHEN a is true THEN 'Yes' ELSE 'No' END
+```
 
 will work, in Snowflake `is` is allowed only for `NULL` identity verification, not for `BOOLEAN`, so the above should be rewritten as
 
-<pre class="EnlighterJSRAW" data-enlighter-language="sql" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="" data-enlighter-lineoffset="" data-enlighter-title="" data-enlighter-group="">-- similar:
+```sql
+-- similar:
 CASE WHEN a = true THEN 'Yes' ELSE 'No' END
 
 -- using IFF:
-IFF( a, 'Yes', 'No')</pre>
+IFF( a, 'Yes', 'No')
+```
 
 Snowflake, in fact, have an `IFF` function, less verbose than `CASE` for when only one condition need to be checked.
 
 Snowflake does not infer a `BOOL` type from `` and `1`, so something like 
 
-<pre class="EnlighterJSRAW" data-enlighter-language="sql" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="" data-enlighter-lineoffset="" data-enlighter-title="" data-enlighter-group="">-- here b is a number with value 1 or 0:
-SELECT CASE WHEN b THEN 'Yes' ELSE 'No' END</pre>
+```sql
+-- here b is a number with value 1 or 0:
+SELECT CASE WHEN b THEN 'Yes' ELSE 'No' END
+```
 
 will not work on Snowflake, you can convert to a condition on the field, so `b=1` or do `TO_BOOLEAN(b)` or `TRY_BOOLEAN(b)` for a safer result.
 
@@ -69,11 +74,13 @@ Another difference is in the Redshift function `ISNULL(a,0)`, this is no longer 
 
 Some issues with string function might occur too. The string concatenation operator is `||` and `+` gives an error message:
 
-<pre class="EnlighterJSRAW" data-enlighter-language="sql" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="" data-enlighter-lineoffset="" data-enlighter-title="" data-enlighter-group="">-- working in Snowflake:
+```sql
+-- working in Snowflake:
 SELECT 'Snowflake' || ' is great' 
 
 -- not working in Snowflake:
-SELECT 'Snowflake' + ' is great'</pre>
+SELECT 'Snowflake' + ' is great'
+```
 
 To remove left and right trailing spaces you would use `TRIM`, valid in both databases, but `BTRIM` that was doing the same in Redshift is not a valid function in Snowflake.
 
@@ -85,20 +92,26 @@ The equivalent of the hash function `FUNC_SHA1` is `SHA1` , so use this one with
 
 Contrary to Redshift, Snowflake allows a better handling of unstructured data so you can query JSON objects more easily. Suppose you have a JSON in the format:
 
-<pre class="EnlighterJSRAW" data-enlighter-language="sql" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="" data-enlighter-lineoffset="" data-enlighter-title="" data-enlighter-group="">my_json = '{"f2":
+```sql
+my_json = '{"f2":
   {"f3":1},
  "f4":
   {"f5":99,
    "f6":"star"}
-}'</pre>
+}'
+```
 
 to get `star` from it in Redshift you would need:
 
-<pre class="EnlighterJSRAW" data-enlighter-language="sql" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="" data-enlighter-lineoffset="" data-enlighter-title="" data-enlighter-group="">select json_extract_path_text( my_json,'f4','f6')</pre>
+```sql
+select json_extract_path_text( my_json,'f4','f6')
+```
 
 in Snowflake:
 
-<pre class="EnlighterJSRAW" data-enlighter-language="sql" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="" data-enlighter-lineoffset="" data-enlighter-title="" data-enlighter-group="">select parse_json( my_json:f4.f6 )</pre>
+```sql
+select parse_json( my_json:f4.f6 )
+```
 
 To know more about how to deal with JSON and semi-structured data, have a look at [this document](https://docs.snowflake.net/manuals/user-guide/querying-semistructured.html) or [this post](https://community.snowflake.com/s/article/json-data-parsing-in-snowflake) in the Snowflake community.
 

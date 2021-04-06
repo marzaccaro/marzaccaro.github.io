@@ -1,0 +1,5 @@
+I"�<p>I’ll be starting a series of posts about some cool <a rel="noreferrer noopener" href="https://www.snowflake.com/" target="_blank">Snowflake</a> (The cloud data platform) features, that makes SnowSQL really cool – compared to other SQL dialect (I am most familiar with Microsoft SQL Server or T-SQL).</p>
+<p>I’ll start the series, talking about <strong>aliasing</strong>.</p>
+<p>Sometimes our SQL get really complex: who haven’t seen a nested case...
+</p>
+:ET

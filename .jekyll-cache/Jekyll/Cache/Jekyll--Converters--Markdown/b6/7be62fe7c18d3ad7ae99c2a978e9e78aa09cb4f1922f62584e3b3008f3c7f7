@@ -1,0 +1,5 @@
+I"1<h4 id="moving-code-from-redshift-to-snowflake">Moving code from Redshift to Snowflake</h4>
+<p>As I said <a rel="noreferrer noopener" aria-label="here, (opens in a new tab)" href="https://foodfordata.com/2019/09/29/querying-a-snowflake-database/" target="_blank">here,</a> my company is in the process of moving from Redshift to Snowflake. There are loads of reasons for doing it: to mention a few, better handling of permissions, less maintenance and less effort to optimise query performance.</p>
+<h4 id="a-really-good-article-as-a-starting-point">A...
+</h4>
+:ET

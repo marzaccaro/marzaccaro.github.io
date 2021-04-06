@@ -10,7 +10,6 @@ image: /wp-content/uploads/2019/10/Account-share-vs-revenue-share-for-new-client
 categories:
   - Data visualisation
 ---
-<span class="rt-reading-time" style="display: block;"><span class="rt-label rt-prefix">Reading Time: </span> <span class="rt-time">3</span> <span class="rt-label rt-postfix">minutes</span></span> 
 
 #### #SWDchallenge and where to find them
 
@@ -20,9 +19,10 @@ I am keen of getting my own copy, but while waiting I decided to take part in th
 
 #### October 2019 SWDchallenge
 
-This is the extract from the latest post. I&#8217;ll follow the steps.<figure class="wp-block-image">
+This is the extract from the latest post. I&#8217;ll follow the steps.
 
-![Exercise 2.1  | Knaflic, Cole.  Storytelling With Data: Letâs Practice!  Wiley, Â© 2019.](https://images.squarespace-cdn.com/content/v1/55b6a6dce4b089e11621d3ed/1569866960440-ILA3DGUHPQZQUO3F98VY/ke17ZwdGBToddI8pDm48kFq85IBSQimBW5vU3jIslaIUqsxRUqqbr1mOJYKfIPR7LoDQ9mXPOjoJoqy81S2I8PaoYXhp6HxIwZIk7-Mi3Tsic-L2IOPH3Dwrhl-Ne3Z2EMBHxCcfLnzTQpwko3MaGDteolNhPNWFS-NzayplzSEKMshLAGzx4R3EDFOm1kBS/Exercise+2.1+%2855%29.png?format=750w) <figcaption>Extract from www.storytellingwithdata.com for this challenge</figcaption></figure> 
+{% include figure.html image="https://images.squarespace-cdn.com/content/v1/55b6a6dce4b089e11621d3ed/1569866960440-ILA3DGUHPQZQUO3F98VY/ke17ZwdGBToddI8pDm48kFq85IBSQimBW5vU3jIslaIUqsxRUqqbr1mOJYKfIPR7LoDQ9mXPOjoJoqy81S2I8PaoYXhp6HxIwZIk7-Mi3Tsic-L2IOPH3Dwrhl-Ne3Z2EMBHxCcfLnzTQpwko3MaGDteolNhPNWFS-NzayplzSEKMshLAGzx4R3EDFOm1kBS/Exercise+2.1+%2855%29.png?format=750w" width=750 height=42 caption="Extract from www.storytellingwithdata.com for this challenge" %}
+
 
 #### Step 1
 
@@ -35,9 +35,9 @@ I would ask where the is the revenue missing to the 100%.
 
 #### Step 2
 
-This is how I re-designed the table using Google Sheets.<figure class="wp-block-image">
+This is how I re-designed the table using Google Sheets.
 
-<img width="797" height="300" src="https://foodfordata.com/wp-content/uploads/2019/10/Screenshot-from-2019-10-06-20-57-34.png" alt="" class="wp-image-273" srcset="http://foodfordata.com/wp-content/uploads/2019/10/Screenshot-from-2019-10-06-20-57-34.png 797w, http://foodfordata.com/wp-content/uploads/2019/10/Screenshot-from-2019-10-06-20-57-34-300x113.png 300w, http://foodfordata.com/wp-content/uploads/2019/10/Screenshot-from-2019-10-06-20-57-34-768x289.png 768w" sizes="(max-width: 797px) 100vw, 797px" /> <figcaption>My re-design</figcaption></figure> 
+{% include figure.html image="/assets/uploads/swd-challenge-my-table.png" width=797 height=300 caption="My re-desing" %}
 
 Here is the list of actions, and my thoughts behind them.
 
@@ -54,9 +54,9 @@ Here is the list of actions, and my thoughts behind them.
 
 The title of the table and the exercise suggest to look at the tier share in terms of number of accounts and revenue, and compare those two. 
 
-I decided to stick with a simple visual, a column chart where I compare only the revenue and account share for the top tiers (so I excluded the Other bucket).<figure class="wp-block-image">
+I decided to stick with a simple visual, a column chart where I compare only the revenue and account share for the top tiers (so I excluded the Other bucket).
 
-<img width="835" height="475" src="http://foodfordata.com/wp-content/uploads/2019/10/Account-share-vs-revenue-share-for-new-client-top-tiers.png" alt="" class="wp-image-275" srcset="http://foodfordata.com/wp-content/uploads/2019/10/Account-share-vs-revenue-share-for-new-client-top-tiers.png 835w, http://foodfordata.com/wp-content/uploads/2019/10/Account-share-vs-revenue-share-for-new-client-top-tiers-300x171.png 300w, http://foodfordata.com/wp-content/uploads/2019/10/Account-share-vs-revenue-share-for-new-client-top-tiers-768x437.png 768w" sizes="(max-width: 835px) 100vw, 835px" /> <figcaption>Chart to compare accounts share and revenue share</figcaption></figure> 
+{% include figure.html image="/assets/uploads/swd-challenge-my-chart.png" width=835 height=475 caption="Chart to compare accounts share and revenue share" %}
 
 Again I used Google Sheet, selecting the column chart and putting the two share % side to side for an easier comparison. 
 

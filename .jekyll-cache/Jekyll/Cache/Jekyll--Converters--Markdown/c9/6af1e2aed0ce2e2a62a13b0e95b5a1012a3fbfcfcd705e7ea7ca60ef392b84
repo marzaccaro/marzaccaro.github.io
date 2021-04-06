@@ -1,0 +1,128 @@
+I"{&<p>This is the second post about some Snowflake features, that I use often and find useful to write a better SQL. You can find the first of the series about aliasing <a rel="noreferrer noopener" href="https://foodfordata.com/2020/08/24/aliasing/" data-type="URL" data-id="https://foodfordata.com/2020/08/24/aliasing/" target="_blank">here</a>.</p>
+
+<h5 id="what-is-it">What is it?</h5>
+
+<p>Have you ever been in the situation where you want to keep all rows of your query but than filter the result set based on a condition you would get from a subset of it? Let me clarify this with some examples:</p>
+
+<ul>
+  <li>Suppose you are tracking all the interactions with a website and you want to see what happened after a specific action took place: then you would want to keep all events for those customers that have a specific event in their event stream.</li>
+  <li>Suppose you sell multiple products per customers and you want to see all the purchase history of the customers that have a very specific product as last purchase.</li>
+</ul>
+
+<p>Let’s stick with this second example. In that case you would have a table looking like this, let’s call it <code class="language-plaintext highlighter-rouge">purchases</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>customer_id</th>
+      <th>product</th>
+      <th>purchased_date (YYYY-MM-DD)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>A</td>
+      <td>2020-04-01</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>B</td>
+      <td>2020-05-03</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>A</td>
+      <td>2020-03-01</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>B</td>
+      <td>2020-04-01</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br />
+So customer 1 and 3 last purchase was product B, and customer 2 last purchase was product A. Now suppose you want to filter in your data only the customers that purchased B as last product, for an analysis you’re doing.</p>
+
+<p>What you would do, without using the qualify statement, would be something like this:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">with</span> <span class="n">product_purchased_order</span> <span class="k">as</span> <span class="p">(</span>
+<span class="k">select</span> 
+  <span class="n">customer_id</span>
+  <span class="p">,</span> <span class="n">product</span>
+  <span class="p">,</span> <span class="n">row_number</span><span class="p">()</span> <span class="n">over</span> <span class="p">(</span><span class="n">partition</span> <span class="k">by</span> <span class="n">customer_id</span> 
+      <span class="k">order</span> <span class="k">by</span> <span class="n">purchased_date</span> <span class="k">desc</span><span class="p">)</span> <span class="k">as</span> <span class="n">n_last_order_nr</span>
+<span class="k">from</span> <span class="n">purchases</span>
+<span class="p">)</span>
+<span class="k">select</span> <span class="n">customer_id</span> 
+<span class="k">from</span> <span class="n">product_purchased_order</span>
+<span class="k">where</span> <span class="n">n_last_order_nr</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">and</span> <span class="n">product</span> <span class="o">=</span><span class="s1">'B'</span>
+</code></pre></div></div>
+
+<p>You see that I have to use at least two queries: first the window statement and the where clause to filter the results I want. There are many other way to get to the same result, but let’s see how to simplify the query.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">qualify</code> expression allows to rewrite the statement above to read nicely and in one single query. Here you go:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span> 
+  <span class="n">customer_id</span>
+  <span class="p">,</span> <span class="n">product</span> 
+  <span class="p">,</span> <span class="n">last_value</span><span class="p">(</span> <span class="n">product</span> <span class="p">)</span> <span class="n">over</span> <span class="p">(</span><span class="n">partition</span> <span class="k">by</span> <span class="n">customer_id</span> 
+      <span class="k">order</span> <span class="k">by</span> <span class="n">purchased_date</span><span class="p">)</span> <span class="k">as</span> <span class="n">last_product_purchased</span>
+<span class="k">from</span> <span class="n">purchases</span>
+<span class="n">qualify</span> <span class="n">last_product_purchased</span> <span class="o">=</span> <span class="s1">'B'</span>
+</code></pre></div></div>
+
+<p>Note the benefits of using this second option:</p>
+
+<ul>
+  <li>I can write only one query</li>
+  <li>I can keep in the same query all the fields in the base table: in this case all the purchase history, even though I am just keeping the customer that have bought B as last product – I can still see all the products they purchased.</li>
+</ul>
+
+<p>When analysing something, you often want to filter by a condition on a partition, but keep all the records at a lower granularity – that is where the <code class="language-plaintext highlighter-rouge">qualify</code> come in handy. Note also how using the alias in the query above made the statement more clear.</p>
+
+<h5 id="where-does-the-qualify-clause-this-fit">Where does the qualify clause this fit?</h5>
+
+<p>From the Snowflake <a rel="noreferrer noopener" href="https://docs.snowflake.com/en/sql-reference/constructs.html" target="_blank">general query syntax reference</a> you get this general outline:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span> <span class="k">WITH</span> <span class="p">...</span> <span class="p">]</span>
+<span class="k">SELECT</span>
+   <span class="p">[</span> <span class="n">TOP</span> <span class="o">&lt;</span><span class="n">n</span><span class="o">&gt;</span> <span class="p">]</span>
+   <span class="p">...</span>
+<span class="p">[</span> <span class="k">FROM</span> <span class="p">...</span>
+   <span class="p">[</span> <span class="k">AT</span> <span class="o">|</span> <span class="k">BEFORE</span> <span class="p">...</span> <span class="p">]</span>
+   <span class="p">[</span> <span class="n">CHANGES</span> <span class="p">...</span> <span class="p">]</span>
+   <span class="p">[</span> <span class="k">CONNECT</span> <span class="k">BY</span> <span class="p">...</span> <span class="p">]</span>
+   <span class="p">[</span> <span class="k">JOIN</span> <span class="p">...</span> <span class="p">]</span>
+   <span class="p">[</span> <span class="n">MATCH_RECOGNIZE</span> <span class="p">...</span> <span class="p">]</span>
+   <span class="p">[</span> <span class="n">PIVOT</span> <span class="o">|</span> <span class="n">UNPIVOT</span> <span class="p">...</span> <span class="p">]</span>
+   <span class="p">[</span> <span class="k">VALUES</span> <span class="p">...</span> <span class="p">]</span>
+   <span class="p">[</span> <span class="n">SAMPLE</span> <span class="p">...</span> <span class="p">]</span> <span class="p">]</span>
+<span class="p">[</span> <span class="k">WHERE</span> <span class="p">...</span> <span class="p">]</span>
+<span class="p">[</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="p">...</span>
+   <span class="p">[</span> <span class="k">HAVING</span> <span class="p">...</span> <span class="p">]</span> <span class="p">]</span>
+<span class="p">[</span> <span class="n">QUALIFY</span> <span class="p">...</span> <span class="p">]</span>
+<span class="p">[</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="p">...</span> <span class="p">]</span>
+<span class="p">[</span> <span class="k">LIMIT</span> <span class="p">...</span> <span class="p">]</span>
+</code></pre></div></div>
+
+<p>So, the <code class="language-plaintext highlighter-rouge">qualify</code> sit in the query order right after the <code class="language-plaintext highlighter-rouge">having</code> (if present) but before the <code class="language-plaintext highlighter-rouge">order by</code> and the <code class="language-plaintext highlighter-rouge">limit</code> clauses.</p>
+
+<p>It’s also possible to not include the window function you are filtering by in the select list, which is good in case you don’t want to show the value you are filtering on, for example in the previous query something like:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span> 
+  <span class="n">customer_id</span>
+  <span class="p">,</span> <span class="n">product</span>
+<span class="k">from</span> <span class="n">purchases</span>
+<span class="n">qualify</span> <span class="n">last_value</span><span class="p">(</span> <span class="n">product</span> <span class="p">)</span> <span class="n">over</span> <span class="p">(</span><span class="n">partition</span> <span class="k">by</span> <span class="n">customer_id</span> 
+    <span class="k">order</span> <span class="k">by</span> <span class="n">purchased_date</span><span class="p">)</span> <span class="o">=</span> <span class="s1">'B'</span>
+</code></pre></div></div>
+
+<p>Which could be good if the additional field is redundant or used just for filtering.</p>
+
+<p>That’s it for today! Hope you’ll start getting rid of some extra CTEs / sub-queries, thanks to the <code class="language-plaintext highlighter-rouge">qualify</code> or, why not, have better time writing the logic to get some fancy slice of your data, based on whatever complex condition.</p>
+
+<p>Have you used the <code class="language-plaintext highlighter-rouge">qualify</code> statement? What are the pros and cons about it? Any warnings that you want to share? Let me know!</p>
+:ET

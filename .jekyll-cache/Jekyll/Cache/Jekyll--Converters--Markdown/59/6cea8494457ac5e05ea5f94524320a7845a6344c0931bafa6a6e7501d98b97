@@ -1,0 +1,4 @@
+I"<p>My company is in the process of moving from an <a href="https://aws.amazon.com/redshift/" target="_blank" rel="noreferrer noopener" aria-label="Amazon Redshift (opens in a new tab)">Amazon Redshift</a> to a <a rel="noreferrer noopener" aria-label="Snowflake (opens in a new tab)" href="https://www.snowflake.com/" target="_blank">Snowflake</a> database, and without going into the consideration of pros and cons of each, let’s see how to query data from Snowflake.</p>
+<h3 id="using-the-web-ui">Using the...
+</h3>
+:ET

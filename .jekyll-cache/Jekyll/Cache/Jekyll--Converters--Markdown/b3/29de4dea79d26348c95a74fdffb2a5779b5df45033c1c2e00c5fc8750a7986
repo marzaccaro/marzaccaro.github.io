@@ -1,0 +1,56 @@
+I"9<h4 id="my-favourite-meet-up-in-london">My favourite meet up in London</h4>
+
+<p>Often you <strong>learn more talking with people</strong> and sharing your experience than studying on your own. In London, there are plenty of opportunities for networking and knowledge sharing and my favourite place is definitely <a href="http://tinytableautalks.com/">Tiny Tableau Talks</a>, a selection of 5 minutes talks about data visualisation and storytelling. I love it so much because:</p>
+
+<ul>
+  <li>In 5 minutes you have to keep it short and often you go straight to the core concept</li>
+  <li>Most of the talks are useful tips</li>
+  <li>It is open to anyone, not just the experts, as long as you have something interesting to share</li>
+  <li>Even if most of the talks are about Tableau, the lessons you learn are often generic and applicable to any data visualisation tool you’re using</li>
+  <li>The organisers are great and help you to get ready to give a talk.</li>
+</ul>
+
+<h4 id="my-experience">My experience</h4>
+
+<p>I’ve been to some of these meet-ups and learned so much, that I felt I have to give back to the community and do my own tiny talk. I am particularly fascinated by history in general because I like to know how and why things are the way they are, when did they change, when people started to formalise some concepts and why? <strong>Data visualisation</strong> is not different, and despite being a recent field it <strong>has an awesome history</strong> to discover.</p>
+
+<h4 id="choosing-the-subject">Choosing the subject</h4>
+
+<p>One of the pioneers in data visualisation and graphical representation of information is Edward Tufte, and I loved his masterpiece <a href="https://www.edwardtufte.com/tufte/books_vdqi"><em>The display of quantitative information</em></a>, which is included by Amazon in the top 100 books of the 20th century.</p>
+
+<figure class="figure  figure--center">
+  <img class="image" src="/assets/uploads/tufte-book.jpg" alt="The Visual Display of Quantitative Information by E. Tufte" width="200" height="400" />
+  <figcaption class="caption">The Visual Display of Quantitative Information by E. Tufte</figcaption>
+</figure>
+
+<p>He formalised a lot of principles of Data Visualisation before digital tools were so popular and mostly journalists were using charts to make news more informative.</p>
+
+<p>I then asked myself: <strong>which of Tufte’s lessons – born in paper design – are still applicable in digital design?</strong></p>
+
+<h4 id="the-principle-of-graphical-integrity">The principle of graphical integrity</h4>
+
+<p>The first principle illustrated by Tufte is the principle of graphical integrity, which is pushing for truthfulness in data representation. The core elements are:</p>
+
+<ul>
+  <li>Graphic should respect the proportions of the numbers they represent</li>
+  <li>Use labelling to help understanding</li>
+  <li>Show data variation, not design variation</li>
+  <li>When displaying monetary variation over time, is better to standardise the units (e.g. consider inflation)</li>
+  <li>Don’t use more dimensions than the ones included in the chart (avoid 3D)</li>
+  <li>Don’t quote data out of context</li>
+</ul>
+
+<h4 id="the-content-of-my-presentation">The content of my presentation</h4>
+
+<p>I couldn’t include all these in 5 minutes, so I cut down to three points and included a practical example for each of them. You can find the final result in the video below.</p>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/wyxq6M8WX8M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+
+<h4 id="my-thoughts-on-tuftes-book">My thoughts on Tufte’s book</h4>
+
+<p>In my opinion, the book is addressing mainly journalists and designer, that’s why there is such a prescriptive approach. Nonetheless – especially now that we are bombarded with reading opportunities – journalists and designers need to capture the eyes of the reader, with both truthful and visually appealing representations.</p>
+
+<h4 id="more-learning-along-the-way">More learning along the way</h4>
+
+<p>Googling around <em>Data Visualisation History</em> you can find this amazing project to outline a <a href="http://www.datavis.ca/milestones/">timeline with milestones</a> of the history of data visualization, by Michael Friendly along with his books, papers and presentations. Here are some curiosities: the bar, line and pie chart were all introduced by William Playfair in the 18th century, whereas Tufte is the inventor of the sparkline, that was first used in 2004.</p>
+:ET

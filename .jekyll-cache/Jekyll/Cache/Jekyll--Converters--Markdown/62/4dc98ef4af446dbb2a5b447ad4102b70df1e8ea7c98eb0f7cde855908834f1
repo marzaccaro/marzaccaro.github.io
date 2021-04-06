@@ -1,0 +1,74 @@
+I"�<p><a href="https://en.wikipedia.org/wiki/Time_series#:~:text=Most%20commonly%2C%20a%20time%20series,the%20Dow%20Jones%20Industrial%20Average." target="blank_">Time series</a> analysis and forecasting are useful in so many contexts, from economy to demographics, and in all the scenarios where you have a sequence of observations that are indexed over time. Examples include the number of Covid-19 cases per day (sadly we are all too familiar with this), the number of pizzas served in a day by a restaurant (this makes me happier), or again the average daily temperature.</p>
+
+<p>Often in business scenarios, there is a need for forecasting demand, orders, or revenue, and sometimes just assuming a linear pattern doesn’t account for seasonality and change in trend. Plus having a quicker and more reliable way to forecast allows businesses to adapt faster to change - improving their planning and spending.</p>
+
+<p>Forecasting has proven especially challenging during Covid-19, as the pandemic was totally unpredictable and made planning for 2020 and beyond really hard. Nonetheless forecasting is useful to have an idea of how the future might look like, given the history.</p>
+
+<p>Remember that</p>
+
+<blockquote>
+  <p>Past performance is no guarantee of future results</p>
+</blockquote>
+
+<p>but using Prophet you feel a little bit like:</p>
+
+<div style="width:100%;height:0;padding-bottom:51%;position:relative;"><iframe src="https://giphy.com/embed/mEcpw2615iy5y" width="100%" height="100%" style="position:absolute" frameborder="0" class="giphy-embed" allowfullscreen=""></iframe></div>
+<p><a href="https://giphy.com/gifs/black-and-white-bw-jim-carrey-mEcpw2615iy5y">via GIPHY</a></p>
+
+<h3 id="what-is-facebook-prophet">What is Facebook Prophet?</h3>
+
+<p>Facebook Prophet it’s an open-source project first released in February 2017, that offers a forecasting procedure implemented with R and Python. It provides the ability to use human-interpretable parameters to improve the forecasts by adding your domain knowledge. The documentation, tutorials, and all relevant links to the code repository are available on the <a href="https://facebook.github.io/prophet/" target="blank_">project website</a>.</p>
+
+<figure class="figure  figure--center">
+  <img class="image" src="/assets/uploads/prophet-pic.png" alt="Prophet project page homepage" width="1024" height="280" />
+  <figcaption class="caption">Prophet project page homepage</figcaption>
+</figure>
+
+<h3 id="how-does-it-work">How does it work?</h3>
+
+<p>More information can be found in <a href="https://peerj.com/preprints/3190/" target="blank_">this paper</a>, but this is what the procedure is trying to do. Suppose we have a time-series <code class="language-plaintext highlighter-rouge">y(t)</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  y(t)= g(t) + s(t) + h(t) + ε(t) 
+</code></pre></div></div>
+
+<p>with those components:</p>
+
+<ul>
+  <li>a trend <code class="language-plaintext highlighter-rouge">g(t</code>) that capture non-periodic changes</li>
+  <li>a seasonal component <code class="language-plaintext highlighter-rouge">s(t)</code>, which models for example weekly or yearly seasonality</li>
+  <li>a holiday component <code class="language-plaintext highlighter-rouge">h(t)</code>, to account for the effect of holidays or other occurrences with potentially a more irregular schedule.</li>
+</ul>
+
+<p>Using time as a regressor Prophet is trying to fit several linear and non linear functions of time as components, minimising the error <code class="language-plaintext highlighter-rouge">ε(t)</code>.</p>
+
+<h3 id="what-are-the-benefits">What are the benefits?</h3>
+
+<p>According to the website the main advantages are:</p>
+
+<ul>
+  <li>Simplify the approach to forecasting, as is robust to outliers, missing data, and dramatic changes in your time series</li>
+  <li>The model fitting uses <a href="https://mc-stan.org/" target="blank_">Stan</a>, which improve performance</li>
+  <li>It allows performance tuning using insight coming from the domain knowledge</li>
+  <li>It’s available in both R and Python and completely open-source.</li>
+</ul>
+
+<p>I’ll be using Python, as is the language I am more familiar with.</p>
+
+<p>Success stories of using Prophet to scale forecasting, include Facebook themselves, but also <a href="https://www.slideshare.net/NavinAlbert/how-starbucks-forecasts-demand-at-scale-with-facebook-prophet-and-databricks" target="blank_">Starbucks</a>.</p>
+
+<h3 id="the-steps">The steps</h3>
+
+<p>These are the steps you generally need to follow if you want to generate a forecast for a time series using Prophet, with Python:</p>
+
+<ol>
+  <li><strong>Setup</strong>. Have an installation of Python 3 in your laptop compatible with Prophet</li>
+  <li><strong>Installation</strong>. Install Facebook Prophet</li>
+  <li><strong>Time Series</strong>. Have a time series in hand, in the form of a <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/dsintro.html#dataframe" target="blank_">DataFrame</a> (Python equivalent of a table) with one column for time and one for the value of the series at that point in time</li>
+  <li><strong>Exploratory Data Analysis</strong>. Analyse seasonality, holiday effects, or eventual segmentation of your series.</li>
+  <li><strong>Predict</strong>. Try out with forecasting with the default setting</li>
+  <li><strong>Diagnose</strong>. Evaluate model performance, with the in-build <a href="https://facebook.github.io/prophet/docs/diagnostics.html" target="blank_">cross-validation function</a></li>
+  <li><strong>Optimise</strong>. Tune parameters and re-evaluate. Usually, you predict, validate, and tune in a loop, until you’re happy with the error.</li>
+</ol>
+
+<p>I’ll show an example following these steps in another post.</p>
+:ET

@@ -1,0 +1,37 @@
+I"�<p>I am an analyst and since the early days I’ve found quite frustrating having to wait days, weeks or even months for the data to be available – because the data warehouse developers were busy, and felt I couldn’t add value or contribute doing what I knew: analysing data.</p>
+
+<p>And I still remember my first job as a BI developer back in 2014 where I was using <a href="https://www.oracle.com/uk/middleware/technologies/bi-enterprise-edition.html">Oracle BI</a>, and I needed to wait the transformation and loading to be completed, before I could do anything at all. That implies a waste not only because the BI developers can’t use their expertise in helping the design, but also because the agility of creating data value is greatly compromised (more on this in the section <em>Coupled pipeline decomposition</em> of <a href="https://martinfowler.com/articles/data-monolith-to-mesh.html">this article</a>).</p>
+
+<p>Fast forward March 2019, my team at <a href="https://www.simplybusiness.co.uk/">Simply Business</a> decided to introduce dbt, in wander for a more clear pipeline and a more robust analytics. The new paradigm is ELT (Extract, Load, Transform) instead of ETL (Extract, Transform, Load) because of the incredible computing power the cloud databases (<a href="https://www.snowflake.com/">Snowflake</a>, <a href="https://aws.amazon.com/redshift/?whats-new-cards.sort-by=item.additionalFields.postDateTime&amp;whats-new-cards.sort-order=desc">Redshift</a>, <a href="https://cloud.google.com/bigquery">BigQuery</a> among others) can bring to the table.</p>
+
+<p>With this new approach, I no longer need to wait for someone to create the base tables for me to use in the reporting tool of choice, and what is most exciting I have a lot more freedom and flexibility to tailor my data structure to the needs of the reporting tool and the business requirements, iterating faster than ever before.</p>
+
+<p>What it means is my role as well changed, and I am no longer building reports / reporting models waiting patiently for someone to load the clean and modelled data for me, but I can just wait for someone to load them and then rework and adapt the model to the business requirements, exposing the changes in the reporting layer with no waiting times. Some companies went on and even adopted some loaders like <a href="https://www.stitchdata.com/">Stitch</a> or <a href="https://fivetran.com/">FiveTran</a> to be able to load data from the data sources and make the loading even quicker.</p>
+
+<p>This change means two main consequences on my role: <strong>more knowledge of the data sources and the relationship among them</strong>, but also the responsibility (<a href="https://en.wikipedia.org/wiki/With_great_power_comes_great_responsibility">with more power comes more responsibility</a>, the evergreen quote) to create something that is reusable rather than create a new table every time a new requirement come in: so understanding if it’s a case of <strong>adding to the existing content or create something else</strong> to cover the new business questions arising.</p>
+
+<figure class="figure  figure--center">
+  <img class="image" src="/assets/uploads/super-analyst.jpg" alt="My bitmoji, credit to Bitmoji &amp; dbt for the logo. &lt;br /&gt;I feel a super-analyst, just thanks to dbt." width="309" height="309" />
+  <figcaption class="caption">My bitmoji, credit to Bitmoji &amp; dbt for the logo. <br />I feel a super-analyst, just thanks to dbt.</figcaption>
+</figure>
+
+<p>dbt is the T, the Trasform, in the ELT process, and the power that made me a <strong>super-analyst</strong>: faster, more reliable and empowered to understand not only the business, but how the business needs are translated into a data model. That’s why I love dbt and I’ll try to describe it in some upcoming posts, hoping to spread the love.</p>
+
+<p>Curious to know more? Start reading these blog posts:</p>
+
+<ul>
+  <li><a href="https://blog.getdbt.com/what--exactly--is-dbt-/" target="_blank" rel="noreferrer noopener">What, exactly, is dbt?</a></li>
+  <li><a href="https://blog.getdbt.com/is-dbt-the-right-tool-for-my-data-transformations/" target="_blank" rel="noreferrer noopener">Is dbt the right tool for my data transformations?</a></li>
+  <li><a href="https://highgrowthengineering.substack.com/p/why-is-dbt-so-important-" target="_blank" rel="noreferrer noopener">Why dbt is so important?</a></li>
+</ul>
+
+<p>Feel like you want to listen to something, instead? [Trying to avoid screen time uh?] Try this podcast episode:</p>
+
+<p><a href="https://softwareengineeringdaily.com/2020/03/09/dbt-data-build-tool-with-tristan-handy/" target="_blank" rel="noreferrer noopener">Software Engineering Daily, DBT: Data Build Tool with Tristan Handy</a></p>
+
+<p>Want to learn by doing? Check out this <a href="https://docs.getdbt.com/tutorial/setting-up/">Tutorial</a></p>
+
+<p>Want to support your learning? The dbt community is just incredibly helpful and welcoming, you can join the <a href="https://community.getdbt.com/">slack channel</a>, or check out the <a href="https://discourse.getdbt.com/">Discourse online</a>.</p>
+
+<p>And finally they just re-launched <a rel="noreferrer noopener" href="https://www.getdbt.com/coalesce/" target="_blank">Coalesce 2020, 7-11 December</a>, can’t wait to attend!</p>
+:ET

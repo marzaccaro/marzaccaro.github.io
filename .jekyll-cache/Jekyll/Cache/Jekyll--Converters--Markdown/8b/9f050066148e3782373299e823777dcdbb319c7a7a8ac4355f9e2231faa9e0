@@ -1,0 +1,54 @@
+I"�<p>My company is in the process of moving from an <a href="https://aws.amazon.com/redshift/" target="_blank" rel="noreferrer noopener" aria-label="Amazon Redshift (opens in a new tab)">Amazon Redshift</a> to a <a rel="noreferrer noopener" aria-label="Snowflake (opens in a new tab)" href="https://www.snowflake.com/" target="_blank">Snowflake</a> database, and without going into the consideration of pros and cons of each, let’s see how to query data from Snowflake.</p>
+
+<h3 id="using-the-web-ui">Using the Web UI</h3>
+
+<p>The first and easiest option is to use the web UI that comes for free once your Snowflake administrator have set you up with a username and password and given you the link to access it. You can find all the details on how to use it <a rel="noreferrer noopener" aria-label="here (opens in a new tab)" href="https://docs.snowflake.net/manuals/user-guide/ui-using.html" target="_blank">here</a>.</p>
+
+<h4 id="worksheets">Worksheets</h4>
+
+<figure class="figure  figure--center">
+  <img class="image" src="/assets/uploads/worksheet-snowflake.png" alt="" width="152" height="37" />
+  
+</figure>
+
+<p>Most notable feature of the Worksheets is that you can <strong>save, load and delete scripts</strong> and keep them saved in your area – without worrying of saving before logging-out as all the scripts are automatically saved.</p>
+
+<p>I wouldn’t recommend writing complex scripts in here, because you <strong>don’t have autocomplete</strong>, and you can just place the SQL element (table, column, etc.) where your cursor is placed.</p>
+
+<p>I would use the UI for database exploration: you can search tables by name, preview data, and see catalogs, tables and columns in your database or if do some basic row count or select all of certain tables.</p>
+
+<p>Snowflake is well aware of the limitations of the UI and recently acquired <a href="https://www.snowflake.com/blog/numeracy-investing-in-our-query-ui/" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)">Numeracy</a>, to improve it.</p>
+
+<h4 id="history">History</h4>
+
+<figure class="figure  figure--center">
+  <img class="image" src="/assets/uploads/history-snowflake.png" alt="" width="128" height="42" />
+  
+</figure>
+
+<p>This is a really good feature of the web UI, as you can <strong>check the performance</strong> for every user / warehouse and see what are the most expensive nodes in the execution plan of your query. This will allow you to optimise your query structure and write your query more efficiently.</p>
+
+<p>Every analyst should keep an eye on the execution plan. This is also the place that tells you if in your specific query is better to use a temporary table or a CTE. Be aware of repeated executions as <a href="https://www.youtube.com/watch?v=lcO8CRT5EMc" target="_blank" rel="noreferrer noopener" aria-label="Snowflake caches result (opens in a new tab)">Snowflake caches result</a>.</p>
+
+<h3 id="using-a-sql-client">Using a SQL Client</h3>
+
+<p>As Snowflake UI is not very friendly for auto-complete and field suggestion, as well as formatting, you can use a SQL client of your choice to connect to the database. My go to SQL client is <a href="https://dbeaver.io/" target="_blank" rel="noreferrer noopener" aria-label="DBeaver (opens in a new tab)">DBeaver</a>, as it is open source and it supports most SQL database.</p>
+
+<h4 id="setting-up-dbeaver-with-snowflake">Setting up DBeaver with Snowflake</h4>
+
+<ul>
+  <li>Download the latest version, 4.3.4 or higher comes automatically with the Snowflake JDBC driver</li>
+  <li>Click create a New Connection and select Snowflake</li>
+  <li>You will need the <strong>Host</strong>, <strong>User</strong>, <strong>Password</strong> and the <strong>Role</strong> (ask your DB administrator for the details)</li>
+  <li>You can specify Database or the Schema, but it’s optional</li>
+</ul>
+
+<figure class="figure  figure--center">
+  <img class="image" src="/assets/uploads/connection-snowflake.png" alt="Connection set-up screen" width="483" height="532" />
+  <figcaption class="caption">Connection set-up screen</figcaption>
+</figure>
+
+<p>Once you’re set up you can now navigate the database and write more complex queries with the autocomplete functionality.</p>
+
+<p>Hope you find this useful and happy querying with Snowflake!</p>
+:ET
