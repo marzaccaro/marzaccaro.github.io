@@ -102,7 +102,7 @@
   {
     "title": "About Food For Data",
     "excerpt": "\n",
-    "content": "Welcome to Food For Data, free tasting of some of my learnings around data.\n\n{% include figure.html image=”/assets/uploads/my-pic.png” position=”left” width=”198” height=”299” %}\n\nI am Martina, a business intelligence analyst, based in London.\n\nI have a background in Mathematics, and always loved its abstraction and power to formalise complex quantitative problems.\n\nI love data visualisation, because it brings together creativity, design and science.\n\nThis blog is a way to share my thoughts around data, hoping to sparkle some interesting considerations around data analytics.\n\nI am originally from Italy and a foodie, so this name couldn’t fit more.\n",
+    "content": "I am Martina, a business intelligence analyst, based in London.\n\nI have a background in Mathematics, and always loved its abstraction and power to formalise complex quantitative problems.\n\nI love data visualisation, because it brings together creativity, design and science.\n\nThis blog is a way to share my thoughts around data, hoping to sparkle some interesting considerations around data analytics.\n\nI am originally from Italy and a foodie, so this name couldn’t fit more.\n",
     "url": "/"
   },
   

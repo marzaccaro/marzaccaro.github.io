@@ -2,12 +2,8 @@
 title: About Food For Data
 layout: page
 # feature_image: assets/uploads/hamed-daram--5fbmfaInwg-unsplash.jpg
+aside: true
 ---
-
-Welcome to Food For Data, free tasting of some of my learnings around data.
-
-{% include figure.html image="/assets/uploads/my-pic.png" position="left" width="198" height="299" %}
-
 I am Martina, a business intelligence analyst, based in London.
 
 I have a background in Mathematics, and always loved its abstraction and power to formalise complex quantitative problems.
