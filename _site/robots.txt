@@ -1,1 +1,1 @@
-Sitemap: https://foodfordata.com//sitemap.xml
+Sitemap: https://marzaccaro.github.io//sitemap.xml
