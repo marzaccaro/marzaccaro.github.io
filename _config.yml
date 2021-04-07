@@ -95,7 +95,7 @@ lang: en-GB # Set the site language
 title: "Food for Data" # Site name or title, also used in jekyll-seo-tag
 # logo: "/assets/logos/logo.svg" # Site logo, also used in jekyll-seo-tag
 description: "Welcome to Food For Data, free tasting of some of my learnings around data." # Site description and default description, also used in jekyll-seo-tag
-url: "https://foodfordata.com/" # Site url, also used in jekyll-seo-tag
+url: "https://marzaccaro.github.io/" # Site url, also used in jekyll-seo-tag
 # baseurl: ""
 # repo: "https://github.com/daviddarnes/alembic"
 # email: "info@foodfordata.com"
@@ -131,7 +131,7 @@ social_links: # Appears in sidebar. Set the urls then uncomment and comment out 
   # Twitter: https://twitter.com/DavidDarnes
   LinkedIn: https://www.linkedin.com/in/martinazaccaron
   GitHub: https://github.com/marzaccaro
-  link: https://foodfordata.com/
+  link: https://marzaccaro.github.io/
   RSS: /feed.xml
 
 sharing_links: # Appear at the bottom of single blog posts, add as desired. The value can be 'true' or the desired button colour
