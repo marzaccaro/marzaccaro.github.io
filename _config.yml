@@ -95,8 +95,8 @@ lang: en-GB # Set the site language
 title: "Food for Data" # Site name or title, also used in jekyll-seo-tag
 # logo: "/assets/logos/logo.svg" # Site logo, also used in jekyll-seo-tag
 description: "Welcome to Food For Data, free tasting of some of my learnings around data." # Site description and default description, also used in jekyll-seo-tag
-url: "https://marzaccaro.github.io/" # Site url, also used in jekyll-seo-tag
-baseurl: ""
+url: "https://foodfordata.com/" # Site url, also used in jekyll-seo-tag
+# baseurl: ""
 # repo: "https://github.com/daviddarnes/alembic"
 # email: "info@foodfordata.com"
 # disqus: "alembic-1" # Blog post comments, uncomment the option and set the site ID from your Disqus account
