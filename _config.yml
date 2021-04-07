@@ -124,8 +124,8 @@ navigation_header:
   url: /blog/
 
 navigation_footer:
-- title: Created by Martina Zaccaron
-  url: https://marzaccaro.github.io/
+- title: Template by David Darnes
+  url: https://darn.es
 
 social_links: # Appears in sidebar. Set the urls then uncomment and comment out as desired
   # Twitter: https://twitter.com/DavidDarnes
