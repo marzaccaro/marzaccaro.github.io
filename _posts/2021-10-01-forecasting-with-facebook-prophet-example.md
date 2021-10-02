@@ -9,9 +9,7 @@ categories:
 
 This is the second part of the post about forecasting with Facebook Prophet. There are a few things to do if you want to repeat this same experiment.
 
-### Prerequisites
-
-#### Installing `pyenv`
+### Setup: installing `pyenv`
 
 First you need to have installed in your laptop a Python installation compatible with [Facebook Prophet](add link).
 
@@ -59,7 +57,7 @@ pyenv versions
 
 Ok now you set yourself up to use different python versions (and environments) for different folders in your laptop.
 
-#### Installing Jupyer (with Prophet)
+### Installation: installing Jupyer Notebook (with `prophet` and `pandas`)
 
 After you're all set with `pyenv` you can create an environment for your forecasting project.
 
@@ -83,4 +81,55 @@ After you're all set with `pyenv` you can create an environment for your forecas
     pyenv local fb-prophet
     ```
 
-4. Install Jupyter notebook, more details [here]()
+4. Install Jupyter notebook, more details [here](https://jupyter.org/install.html)
+
+    ```
+    pip install notebook
+    ```
+
+5. Install `pandas` and `plotly` for interactive charts (this was giving some errors later, if missing and I'll need it anyway!)
+
+    ```
+    pip install pandas
+    ```
+
+4. Install prophet and dependedencies, more details [here](https://facebook.github.io/prophet/docs/installation.html#python)
+
+    ```
+    # bash
+    # Install pystan with pip before using pip to install prophet
+    # pystan>=3.0 is currently not supported
+    pip install pystan==2.19.1.1
+    pip install prophet
+    ```
+
+<!-- 
+Maybe is actually better to generate all of this with pipenv, actually - give it a go!
+ -->
+
+Verify that you have all the things you need, using `pip show <module name>` ie:
+
+```
+pip show notebook
+pip show pandas
+pip show prophet
+```
+
+### Find a timeseries you want to forecast
+
+There are many public data sets out there, you could even use the one that the [prophet tutorial](https://facebook.github.io/prophet/docs/quick_start.html#python-api) is using.
+For my example I'll use a public datasource from the Google Analytics Demo accounts [here](https://support.google.com/analytics/answer/6367342?hl=en#access&zippy=%2Cin-this-article), I did download an extract of all sessions count from January 2018 to October 2021, which are the result of tracking of this [Google Merchandise Store](https://shop.googlemerchandisestore.com/?utm_source=partners&utm_medium=affiliate&utm_campaign=data%20share%20article).
+
+For convenience I loaded those into a csv, which you can find [here](add link when you load repo)
+
+### Forecasting Sessions for Google Merchandise
+
+Ok, now we can start forecasting our time series. Let's start! You can follow along all of this if you install this...
+
+
+
+
+
+
+
+
