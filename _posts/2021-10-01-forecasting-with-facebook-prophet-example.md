@@ -127,6 +127,8 @@ For convenience I loaded those into a csv, which you can find [here](add link wh
 Ok, now we can start forecasting our time series. Let's start! You can follow along all of this if you install this...
 
 
+### Diagnose
+
 
 
 
