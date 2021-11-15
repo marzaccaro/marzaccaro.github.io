@@ -1,8 +1,8 @@
-const version = '20210407200739';
+const version = '20211112230404';
 const cacheName = `static::${version}`;
 
 const buildContentBlob = () => {
-  return ["/2021/02/07/forecasting-with-facebook-prophet-an-introduction/","/2020/09/03/why-i-love-dbt/","/2020/08/26/qualify/","/2020/08/24/aliasing/","/2019/10/13/snowflake-vs-redshift-some-syntax-differences/","/2019/10/06/lets-practice-with-this-month-swdchallenge/","/2019/09/29/querying-a-snowflake-database/","/2019/06/01/a-3d-exploding-pie-chart-not-a-good-idea/","/2019/04/15/join-2019-london/","/2019/02/23/edward-tufte-and-the-graphical-integrity/","/categories/","/elements/","/blog/","/","/manifest.json","/offline/","/assets/search.json","/search/","/assets/styles.css","/thanks/","/redirects.json","/sitemap.xml","/robots.txt","/blog/page2/","/blog/page3/","/feed.xml","/assets/styles.css.map","", "/assets/default-offline-image.png", "/assets/scripts/fetch.js"
+  return ["/looker/2021/11/12/keep-content-in-looker-relevant/","/2021/02/07/forecasting-with-facebook-prophet-an-introduction/","/2020/09/03/why-i-love-dbt/","/2020/08/26/qualify/","/2020/08/24/aliasing/","/2019/10/13/snowflake-vs-redshift-some-syntax-differences/","/2019/10/06/lets-practice-with-this-month-swdchallenge/","/2019/09/29/querying-a-snowflake-database/","/2019/06/01/a-3d-exploding-pie-chart-not-a-good-idea/","/2019/04/15/join-2019-london/","/categories/","/elements/","/blog/","/","/manifest.json","/offline/","/assets/search.json","/search/","/assets/styles.css","/thanks/","/redirects.json","/sitemap.xml","/robots.txt","/blog/page2/","/blog/page3/","/feed.xml","/assets/styles.css.map","", "/assets/default-offline-image.png", "/assets/scripts/fetch.js"
   ]
 }
 

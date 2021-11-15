@@ -1,0 +1,56 @@
+I"%<p>If you use Looker (or any other BI tool where users can create content) for long enough you’ll appreciate how it’s essential to keep it clean, by continuosly removing unused or stale content.
+This is the same you’d to to keep your closet tidy, when decluttering once in a while. 
+If you create a method to do it consistenly, it will be much easier to find the clothes you’re looking for later.</p>
+
+<iframe src="https://giphy.com/embed/cIoZPitO8sMpAN2Fia" width="480" height="480" frameborder="0" class="giphy-embed" allowfullscreen=""></iframe>
+<p><a href="https://giphy.com/gifs/netflix-konmari-mariekondo-tidyingup-cIoZPitO8sMpAN2Fia">via GIPHY</a></p>
+
+<h1 id="the-proliferation-of-content-in-looker">The proliferation of content in Looker</h1>
+<p>Finding the right content is hard when you have lots of creators and no tags
+Creating new content is easy - maybe you just save a test for a schedule or quickly share a report with someone. Or say you want to see two analyses side by side then you are forced to spin up a dashboard for a quick check
+Everyone in Looker is a content creator, thus increasing the amount of content created
+There is no native way to tag content in Looker, which would allow you to identify the relevant content based on a set of keywords
+Even if you ask people to remove content they don’t use anymore, they are probably busy doing something else and is not deemed a priority</p>
+
+<p>As a result, there is a lot of content left unused, which makes it harder to find useful content when using the search bar, slows returning results in the instance, and slows validation when using the Content Validator.</p>
+
+<p>The way you archive content, the native way:
+The way Looker suggests archiving irrelevant content, is for Administrators of your Looker instance to check the Unused Content folder and manually remove the unused content, selecting appropriate times of non-usage.
+See docs here Deleted and unused content for admins</p>
+
+<p>Complication
+Our situation
+We use Collibra as our Data Catalog, to facilitate searching data across multiple platforms (ie. Data Lakes and other BI tools all flow into this portal, to ensure discoverability and governance across the organization).
+We have about 1700 Looker users (and growing) most of which are Explorers that can generate their own content 
+We want to have as few Admins as possible
+Checking with the users, before archiving anything, wouldn’t be scalable and knowing if the content is still relevant for all the Business Function, would be just impossible for one human brain to handle!
+The way Looker handles archiving content is not suitable for us/ other Looker Customers
+Archiving using the Unused Content is done by Admins, but there is always the fear that you’re archiving something important, and you would need to check with the user before [link about how tag are useful in the modern web search, especially when text-based content is involved]
+Not necessarily content that is favourite is always important, and in fact sometimes people forget unfavourite contents. The fact that by default you can’t archive content that is favourite, but not used is a bit of a limitation, given the amount of users of our instance and the fact that everyone can favourite content.</p>
+
+<p>Resolution
+What did we do to archive content instead?
+We used custom Looks from the Content Usage Explore in the System Activity 
+We defined the criteria for which content could be archived, starting with fairly relaxed one, ie. 1 year of non-usage and not used in API calls, embedding or schedules
+We decided to run this monthly, because that’s enough to keep our instance clean
+We defined for Looks and Dashboard a specific attribute in Collibra called “Never Delete” to tag content, that even if unused is still important. This content could be used for historical analysis or contains important commentary that the users want to keep 
+Every month we select the content that is candidate for archiving, notify the content creators, and give 2 weeks to review the content and tag it with the Never Delete Flag, in case they do want to keep it. If they don’t do anything the content is going to be archived. Users need to actively opt-in to keep the content, otherwise the content will be archived.
+After the 2 weeks, we archive the content, unless it has a Never Delete Flag against it.
+We don’t hard-delete content, but just move it to the trash, where - if needs be - it can be restored by an Administrator. Even though after running this process twice we haven’t yet have to restore anything, this become more common, when considering content unused for 6 months or when running the archival process in summer, when more people are on holidays.</p>
+
+<p>[Add screenshot of a diagram here]</p>
+
+<p>How did we do it?
+[Technical implementation or mention the elements you would need] 
+Improvement, how can you do this too?
+What would we have liked to have in Looker to improve the process?
+A system to tag content native to Looker, this could be used to flag useful content and improve search result as well - plus we could have asked people to tag content directly in Looker instead of another system
+We could have cleared favourites and ask people to use the favourite icon to save content that they would like to keep - but then we’d overload the “favourite” concept with some new meanings, making the favourite feature less useful.</p>
+
+<p>What can be improved and limitations?
+We used Collibra to tag content with a Never Delete flag, but this leaves outside of the system: needs to sync with Collibra
+The email is not yet automated but potentially can be using Airflow Email Operators [link]
+Sometimes users keep schedules of reports that they aren’t actually important or they are no longer using, but we preferred to be conservative and keep reports that are scheduled
+If the creator of the content has since left the company, but they created Dashboards or Looks relevant to someone else than the creator: in this case the default behaviour would be archiving. Usually though, really important content is consistently used, and not left unused for a while.</p>
+
+:ET
