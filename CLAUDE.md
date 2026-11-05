@@ -20,7 +20,7 @@ No test suite. Verify changes with `npm run build` (must finish with no errors) 
 - `src/content/blog/*.md` — posts. Front matter: `title`, `date`, `permalink`, `category`, optional `description`, `image`. The `permalink` (`/YYYY/MM/DD/slug/`) is what the post route uses, so it must stay unchanged to preserve old URLs.
 - `src/layouts/Base.astro` — all `<head>` metadata (canonical, Open Graph, Twitter, JSON-LD). Every page should pass its own `title` and `description`.
 - `src/styles/global.css` — all styling; design tokens as CSS variables at the top (light + dark).
-- `public/` — static files: `uploads/` (post images, served at `/uploads/`), `logos/`, `social.png` (1200×630 share image), `CNAME`, `robots.txt`.
+- `public/` — static files: `uploads/` (post images, served at `/uploads/`), `social.png` (1200×630 share image), `CNAME`, `robots.txt`.
 - `.github/workflows/deploy.yml` — build and deploy. Repo Pages source must be set to "GitHub Actions".
 
 ## Conventions and gotchas
