@@ -7,11 +7,7 @@ export const site = {
     'Analytics engineer and dbt Labs technical instructor with 10+ years in data. I help teams get dbt right: set up properly, or fixed when it has become slow, messy or fragile.',
   // Shown on the site only via components/Email.astro (obfuscated for crawlers)
   email: 'hello@foodfordata.com',
-<<<<<<< Updated upstream
-  booking: 'https://cal.com/martina-z-vchurs/15min',
-=======
   booking: 'https://cal.com/martina-z-ffd/15min',
->>>>>>> Stashed changes
   linkedin: 'https://www.linkedin.com/in/martinazaccaron',
   github: 'https://github.com/marzaccaro',
   // TODO: fill in before publishing (see /legal/)
