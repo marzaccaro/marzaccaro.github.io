@@ -1,0 +1,18 @@
+---
+// Renders the contact email without it appearing in the static HTML,
+// so simple crawlers don't harvest it. Assembled in the browser.
+import { site } from '../site';
+const [user, domain] = site.email.split('@');
+const rev = (s: string) => [...s].reverse().join('');
+---
+<a class="obf-email" href="#" data-u={rev(user)} data-d={rev(domain)}>
+  <noscript>Enable JavaScript to see the email address</noscript>
+</a>
+<script>
+  const r = (s: string) => [...s].reverse().join('');
+  document.querySelectorAll<HTMLAnchorElement>('a.obf-email').forEach((a) => {
+    const addr = `${r(a.dataset.u!)}@${r(a.dataset.d!)}`;
+    a.href = `mailto:${addr}`;
+    a.textContent = addr;
+  });
+</script>

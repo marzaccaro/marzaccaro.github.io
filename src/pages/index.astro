@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { site } from '../site';
+
+const posts = (await getCollection('blog')).sort((a, b) => +b.data.date - +a.data.date).slice(0, 3);
+---
+<Base>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Analytics engineer · dbt Labs technical instructor</p>
+      <h1>Analytics engineering for scale-ups</h1><br />
+      <p class="lead">I help data teams get dbt right: set up properly from day one, or fixed when the project has become slow, messy or fragile.</p>
+      <div class="actions">
+        <a class="btn" href="/contact/">Work with me</a>
+        <a class="btn ghost" href="/about/">About me</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap measure">
+      <p class="eyebrow">Why me</p>
+      <h2 style="margin-top:0">Built to be maintained without me</h2>
+      <p>10+ years working in data, a mathematics background, and a habit of explaining things plainly. At Cleo I cut dbt run time and CI check time by 50%; at Kering I delivered 7+ production data products on dbt and BigQuery. I upskill teams so good practices outlast my time on a project.</p>
+      <p><a href="/about/">More about me →</a></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">Latest writing</p>
+      <ul class="posts">
+        {posts.map((p) => (
+          <li><a href={p.data.permalink}>
+            <time datetime={p.data.date.toISOString()}>{p.data.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</time>
+            <span class="t">{p.data.title}</span>
+            <span class="cat">{p.data.category}</span>
+          </a></li>
+        ))}
+      </ul>
+      <p><a href="/blog/">All posts →</a></p>
+    </div>
+  </section>
+
+  <section class="band cta">
+    <div class="wrap">
+      <h2>Let's talk about your data stack</h2>
+      <p class="lead" style="margin-inline:auto">Start with a free 15-minute call.</p>
+      <div class="actions"><a class="btn" href={site.booking} rel="noopener">Book a 15-minute call</a></div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,15 @@
+---
+import { site } from '../site';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap">
+    <p>&copy; 2019&ndash;{year} {site.author} · P. IVA {site.legal.vat} · {site.legal.address ? `${site.legal.address}, ` : ''}{site.legal.city}</p>
+    <ul>
+      <li><a href={site.linkedin} rel="me noopener">LinkedIn</a></li>
+      <li><a href={site.github} rel="me noopener">GitHub</a></li>
+      <li><a href="/legal/">Legal</a></li>
+      <li><a href="/rss.xml">RSS</a></li>
+    </ul>
+  </div>
+</footer>

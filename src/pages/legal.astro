@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../site';
+import Email from '../components/Email.astro';
+const { vat, city, address } = site.legal;
+---
+<Base title="Legal" description="Business details and privacy notice for Food for Data.">
+  <div class="wrap page-head">
+    <p class="eyebrow">Legal</p>
+    <h1>Legal information</h1>
+  </div>
+  <section style="padding-top:1rem">
+    <div class="wrap prose">
+      <h2>Business details</h2>
+      <p>
+        <strong>{site.author}</strong>, freelance consultant<br />
+        Partita IVA: {vat}<br />
+        Based in {address ? `${address}, ` : ''}{city}, Italy<br />
+        Email: <Email />
+      </p>
+
+      <h2>Privacy</h2>
+      <p>This website does not use cookies, analytics or tracking, and it has no forms. Fonts are served from this site, not from third parties.</p>
+      <p>If you email me, I use your name, email address and message only to reply and to manage any resulting work. I keep them as long as needed for that purpose, or as required by law (for example, accounting records if we work together), and I don't share them with third parties except service providers needed to run my business, such as email hosting.</p>
+      <p>The data controller is {site.author}, at the contact details above. Under the GDPR you can ask me for access to, correction of or deletion of your data, and you can complain to the Italian data protection authority (<a href="https://www.garanteprivacy.it" rel="noopener">Garante per la protezione dei dati personali</a>).</p>
+
+      <p>If you book a call, the booking page is run by <a href="https://cal.com" rel="noopener">Cal.com</a>, which processes the name, email address and any details you enter there under its own privacy policy. Nothing is sent to Cal.com unless you choose to open that page.</p>
+
+      <h2>Hosting</h2>
+      <p>The site is hosted on GitHub Pages, which may log visitors' IP addresses as part of normal server operation.</p>
+
+      <h2>Content</h2>
+      <p>Unless stated otherwise, text and images are © {site.author}. Code samples in blog posts may be reused freely.</p>
+    </div>
+  </section>
+</Base>
