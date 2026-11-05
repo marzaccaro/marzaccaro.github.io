@@ -14,7 +14,7 @@ export const site = {
   legal: {
     vat: 'IT02984690426', // Partita IVA
     city: 'Senigallia',
-    address: "Via Sant'A.M. De' Liguori 29/3", // office address; leave empty to show the city only
+    address: "", // office address; leave empty to show the city only
   },
   socialImage: '/social.png',
   nav: [
