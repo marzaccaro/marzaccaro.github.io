@@ -110,6 +110,7 @@ section { padding-block: 4rem; }
 .prose pre code { background: none; padding: 0; }
 .prose table { border-collapse: collapse; display: block; overflow-x: auto; }
 .prose th, .prose td { border: 1px solid var(--line); padding: .4rem .7rem; }
-.portrait { width: 9rem; height: 9rem; border-radius: 50%; object-fit: cover; border: 1px solid var(--line); }
-.about { display: grid; gap: 2.5rem; grid-template-columns: 1fr; align-items: start; }
-@media (min-width: 52rem) { .about { grid-template-columns: 1fr 11rem; } }
+.portrait { width: 11rem; aspect-ratio: 4 / 5; height: auto; border-radius: var(--radius); border: 1px solid var(--line); flex: none; }
+.intro { display: flex; gap: 2rem; align-items: flex-start; max-width: var(--measure); margin-bottom: 2.5rem; }
+.intro p { margin: 0; font-size: 1.15rem; }
+@media (max-width: 40rem) { .intro { flex-direction: column; } .portrait { width: 9rem; } }
