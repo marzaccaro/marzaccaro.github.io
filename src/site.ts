@@ -16,6 +16,8 @@ export const site = {
     city: 'Senigallia',
     address: "", // office address; leave empty to show the city only
   },
+  // GoatCounter site code: the "xxx" in https://xxx.goatcounter.com. Leave empty to disable page-view counting.
+  goatcounter: 'martinaz',
   socialImage: '/social.png',
   nav: [
     { title: 'About', href: '/about/' },

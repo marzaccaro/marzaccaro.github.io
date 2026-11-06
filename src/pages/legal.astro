@@ -20,7 +20,14 @@ const { vat, city, address } = site.legal;
       </p>
 
       <h2>Privacy</h2>
-      <p>This website does not use cookies, analytics or tracking, and it has no forms. Fonts are served from this site, not from third parties.</p>
+      {site.goatcounter ? (
+        <>
+        <p>This website does not use cookies, tracking or advertising, and it has no forms. Fonts are served from this site, not from third parties.</p>
+        <p>To count page views I use <a href="https://www.goatcounter.com" rel="noopener">GoatCounter</a>, a privacy-friendly analytics service. It sets no cookies and does not build profiles of visitors or follow them across sites. For each visit it records the page viewed, the referring page, the browser and operating system, the screen size and the country. IP addresses are not stored, and the data is used only to see which pages are read. The legal basis is my legitimate interest in understanding how the site is used. The script is loaded from gc.zgo.at, so your browser makes a request to GoatCounter's servers when a page opens.</p>
+        </>
+      ) : (
+        <p>This website does not use cookies, analytics or tracking, and it has no forms. Fonts are served from this site, not from third parties.</p>
+      )}
       <p>If you email me, I use your name, email address and message only to reply and to manage any resulting work. I keep them as long as needed for that purpose, or as required by law (for example, accounting records if we work together), and I don't share them with third parties except service providers needed to run my business, such as email hosting.</p>
       <p>The data controller is {site.author}, at the contact details above. Under the GDPR you can ask me for access to, correction of or deletion of your data, and you can complain to the Italian data protection authority (<a href="https://www.garanteprivacy.it" rel="noopener">Garante per la protezione dei dati personali</a>).</p>
 

@@ -51,6 +51,14 @@ const imageUrl = new URL(image, site.url).href;
         founder: { '@type': 'Person', name: site.author, sameAs: [site.linkedin, site.github] },
       })}
     />
+    {site.goatcounter && import.meta.env.PROD && (
+      <script
+        is:inline
+        data-goatcounter={`https://${site.goatcounter}.goatcounter.com/count`}
+        async
+        src="https://gc.zgo.at/count.js"
+      ></script>
+    )}
   </head>
   <body>
     <Header />
